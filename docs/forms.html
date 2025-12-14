@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Borang & Muat Turun — Banjaria Court</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="./">Banjaria Court</a>
+        <nav class="nav">
+          <a href="announcements.html">Notis</a>
+          <a href="reports.html">AGM/EGM</a>
+          <a href="activities.html">Aktiviti</a>
+          <a href="facilities.html">Kemudahan</a>
+          <a href="vendors.html">Vendor</a>
+          <a href="quotes.html">Sebut Harga</a>
+          <a href="contact.html">Hubungi</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>Borang & Muat Turun</h1>
+      <ul id="forms" class="list"></ul>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>Hak cipta © <span id="year"></span> Banjaria Court.</p>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+      fetch('data/forms.json')
+        .then(r => r.json())
+        .then(items => {
+          const ul = document.getElementById('forms');
+          ul.innerHTML = items.map(item => `
+            <li><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a> — <span class="meta">${item.category}</span></li>
+          `).join('');
+        })
+        .catch(() => {
+          document.getElementById('forms').innerHTML = '<li>Senarai borang akan dikemas kini.</li>';
+        });
+    </script>
+  </body>
+</html>

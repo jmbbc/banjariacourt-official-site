@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Senarai Vendor — Banjaria Court</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="./">Banjaria Court</a>
+        <nav class="nav">
+          <a href="announcements.html">Notis</a>
+          <a href="reports.html">AGM/EGM</a>
+          <a href="activities.html">Aktiviti</a>
+          <a href="facilities.html">Kemudahan</a>
+          <a class="active" href="vendors.html">Vendor</a>
+          <a href="quotes.html">Sebut Harga</a>
+          <a href="contact.html">Hubungi</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>Senarai Vendor</h1>
+      <p>Vendor perkhidmatan dan pembekal yang berdaftar dengan JMB.</p>
+      <table class="table" id="vendors"></table>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>Hak cipta © <span id="year"></span> Banjaria Court.</p>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+      fetch('data/vendors.json')
+        .then(r => r.json())
+        .then(items => {
+          const t = document.getElementById('vendors');
+          t.innerHTML = `
+            <thead>
+              <tr><th>Nama</th><th>Perkhidmatan</th><th>Telefon</th><th>Email</th></tr>
+            </thead>
+            <tbody>
+              ${items.map(v => `
+                <tr>
+                  <td>${v.name}</td>
+                  <td>${v.service}</td>
+                  <td>${v.phone || '-'}</td>
+                  <td>${v.email ? `<a href="mailto:${v.email}">${v.email}</a>` : '-'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          `;
+        })
+        .catch(() => {
+          document.getElementById('vendors').outerHTML = '<p>Senarai vendor akan dikemas kini.</p>';
+        });
+    </script>
+  </body>
+</html>

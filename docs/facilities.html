@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kemudahan — Banjaria Court</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="./">Banjaria Court</a>
+        <nav class="nav">
+          <a href="announcements.html">Notis</a>
+          <a href="reports.html">AGM/EGM</a>
+          <a href="activities.html">Aktiviti</a>
+          <a class="active" href="facilities.html">Kemudahan</a>
+          <a href="vendors.html">Vendor</a>
+          <a href="quotes.html">Sebut Harga</a>
+          <a href="contact.html">Hubungi</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>Kemudahan</h1>
+      <p>Senarai kemudahan di Banjaria Court dan garis panduan penggunaan.</p>
+      <div id="facilities" class="cards"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>Hak cipta © <span id="year"></span> Banjaria Court.</p>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+      fetch('data/facilities.json')
+        .then(r => r.json())
+        .then(items => {
+          const el = document.getElementById('facilities');
+          el.innerHTML = items.map(item => `
+            <div class="card">
+              <h3>${item.name}</h3>
+              <p>${item.description}</p>
+              ${item.rules ? `<ul class="list">${item.rules.map(r => `<li>${r}</li>`).join('')}</ul>` : ''}
+            </div>
+          `).join('');
+        })
+        .catch(() => {
+          document.getElementById('facilities').innerHTML = '<p>Maklumat kemudahan akan dikemas kini.</p>';
+        });
+    </script>
+  </body>
+</html>

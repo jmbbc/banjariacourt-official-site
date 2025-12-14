@@ -1,0 +1,14 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.log
+
+# Node (if added later)
+node_modules/
+
+# Build artifacts (not used, but safe)
+dist/
+build/
+
+# Cache
+.cache/

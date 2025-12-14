@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Kolam Renang",
+    "description": "Dibuka 7:00 pagi hingga 10:00 malam.",
+    "rules": ["Pakaian sesuai wajib", "Kanak-kanak mesti diawasi", "Dilarang makan/minum di tepi kolam"]
+  },
+  {
+    "name": "Gimnasium",
+    "description": "Akses dengan kad penduduk.",
+    "rules": ["Lap peralatan selepas guna", "Kasut sukan sahaja"]
+  }
+]

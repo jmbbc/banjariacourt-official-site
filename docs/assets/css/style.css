@@ -1,0 +1,27 @@
+:root{--primary:#0B3D3B;--accent:#F2B705;--bg:#FFFFFF;--text:#263238;--muted:#6b7b83;--light:#E5EEF1}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:16px;line-height:1.6}
+.container{max-width:1000px;margin:0 auto;padding:0 16px}
+.site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--light);z-index:10}
+.header-wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-family:Poppins,Inter,sans-serif;font-weight:700;color:var(--primary);text-decoration:none;font-size:20px}
+.nav a{margin-left:16px;text-decoration:none;color:#444;padding:8px 10px;border-radius:6px}
+.nav a.active,.nav a:hover{background:var(--light);color:var(--primary)}
+.hero{background:linear-gradient(90deg,var(--light),#fff);padding:56px 0;border-bottom:1px solid var(--light)}
+.hero h1{font-family:Poppins,Inter,sans-serif;font-weight:700;margin:0 0 10px;font-size:32px}
+.hero-actions{margin-top:16px}
+.btn{display:inline-block;border:1px solid var(--light);padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}
+.card{border:1px solid var(--light);border-radius:12px;padding:16px;background:#fff}
+.list{list-style:none;padding:0;margin:0}
+.list li{padding:8px 0;border-bottom:1px solid var(--light)}
+.posts .post{border-bottom:1px solid var(--light);padding:16px 0}
+.meta{color:var(--muted);font-size:14px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap}
+.thumbs img{width:120px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--light)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.table{width:100%;border-collapse:collapse;border:1px solid var(--light)}
+.table th,.table td{border:1px solid var(--light);padding:8px;text-align:left}
+.site-footer{border-top:1px solid var(--light);margin-top:32px;padding:24px 0;background:#fafafa}
+.footer-wrap{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}

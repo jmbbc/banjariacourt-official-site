@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Senarai Sebut Harga — Banjaria Court</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/favicon.png">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="./">Banjaria Court</a>
+        <nav class="nav">
+          <a href="announcements.html">Notis</a>
+          <a href="reports.html">AGM/EGM</a>
+          <a href="activities.html">Aktiviti</a>
+          <a href="facilities.html">Kemudahan</a>
+          <a href="vendors.html">Vendor</a>
+          <a class="active" href="quotes.html">Sebut Harga</a>
+          <a href="contact.html">Hubungi</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>Senarai Sebut Harga</h1>
+      <p>Dokumen RFP/RFQ dan keputusan sebut harga (jika ada).</p>
+      <div id="quotes" class="posts"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>Hak cipta © <span id="year"></span> Banjaria Court.</p>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+      fetch('data/quotes.json')
+        .then(r => r.json())
+        .then(items => {
+          const el = document.getElementById('quotes');
+          el.innerHTML = items.map(item => `
+            <article class="post">
+              <h3>${item.title}</h3>
+              <p class="meta">Tarikh: ${item.date}</p>
+              <p>${item.summary || ''}</p>
+              ${item.rfq ? `<p><a class="btn" href="${item.rfq}" target="_blank" rel="noopener">Dokumen RFQ</a></p>` : ''}
+              ${item.result ? `<p><a class="btn" href="${item.result}" target="_blank" rel="noopener">Keputusan</a></p>` : ''}
+            </article>
+          `).join('');
+        })
+        .catch(() => {
+          document.getElementById('quotes').innerHTML = '<p>Tiada maklumat sebut harga buat masa ini.</p>';
+        });
+    </script>
+  </body>
+</html>
