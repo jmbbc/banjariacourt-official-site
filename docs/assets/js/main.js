@@ -1,6 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
+
+  // Mobile nav toggle
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.getElementById('nav');
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) nav.querySelector('a')?.focus();
+    });
+  }
+
+  // Home: show latest 3 announcements
   const latestEl = document.getElementById('latest-list');
   if (latestEl) {
     fetch('data/announcements.json')

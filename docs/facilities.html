@@ -11,10 +11,12 @@
     <link rel="icon" href="assets/img/favicon.png">
   </head>
   <body>
-    <header class="site-header">
+    <a class="skip-link" href="#kandungan">Langkau ke kandungan</a>
+    <header class="site-header" role="banner">
       <div class="container header-wrap">
         <a class="brand" href="./">Banjaria Court</a>
-        <nav class="nav">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+        <nav id="nav" class="nav" aria-label="Utama">
           <a href="announcements.html">Notis</a>
           <a href="reports.html">AGM/EGM</a>
           <a href="activities.html">Aktiviti</a>
@@ -26,8 +28,8 @@
       </div>
     </header>
 
-    <main class="container">
-      <h1>Kemudahan</h1>
+    <main id="kandungan" class="container" aria-labelledby="tajuk">
+      <h1 id="tajuk">Kemudahan</h1>
       <p>Senarai kemudahan di Banjaria Court dan garis panduan penggunaan.</p>
       <div id="facilities" class="cards"></div>
     </main>

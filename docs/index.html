@@ -11,10 +11,12 @@
     <link rel="icon" href="assets/img/favicon.png">
   </head>
   <body>
-    <header class="site-header">
+    <a class="skip-link" href="#utama">Langkau ke kandungan</a>
+    <header class="site-header" role="banner">
       <div class="container header-wrap">
         <a class="brand" href="./">Banjaria Court</a>
-        <nav class="nav">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+        <nav id="nav" class="nav" aria-label="Utama">
           <a href="announcements.html">Notis</a>
           <a href="reports.html">AGM/EGM</a>
           <a href="activities.html">Aktiviti</a>
@@ -27,19 +29,20 @@
     </header>
 
     <main>
-      <section class="hero">
+      <section id="utama" class="hero" aria-labelledby="tajuk-utama">
         <div class="container">
-          <h1>Laman Rasmi Banjaria Court</h1>
+          <h1 id="tajuk-utama">Laman Rasmi Banjaria Court</h1>
           <p>Maklumat terkini komuniti: notis, laporan, aktiviti dan kemudahan.</p>
           <div class="hero-actions">
             <a class="btn primary" href="announcements.html">Lihat Notis Terkini</a>
-            <a class="btn" href="reports.html">Laporan AGM/EGM</a>
+            <a class="btn ghost" href="reports.html">Laporan AGM/EGM</a>
           </div>
         </div>
       </section>
 
-      <section class="quick-links">
+      <section class="section quick-links" aria-labelledby="pantas">
         <div class="container cards">
+          <h2 id="pantas" class="sr-only" style="position:absolute;left:-9999px">Pautan Pantas</h2>
           <a class="card" href="announcements.html">
             <h3>Notis Terkini</h3>
             <p>Pengumuman rasmi JMB dan pengurusan.</p>
@@ -59,9 +62,9 @@
         </div>
       </section>
 
-      <section class="latest">
+      <section class="section latest" aria-labelledby="terkini">
         <div class="container">
-          <h2>Terkini</h2>
+          <h2 id="terkini">Terkini</h2>
           <ul id="latest-list" class="list"></ul>
         </div>
       </section>
