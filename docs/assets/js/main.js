@@ -2,6 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 
+  // Ensure auth widget placeholder exists in header (right side)
+  const headerWrap = document.querySelector('.header-wrap');
+  const navEl = document.getElementById('nav');
+  if (headerWrap && navEl && !document.getElementById('authWidget')) {
+    const slot = document.createElement('span');
+    slot.id = 'authWidget';
+    slot.className = 'auth-widget';
+    navEl.appendChild(slot);
+  }
+
   // Mobile nav toggle
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.getElementById('nav');

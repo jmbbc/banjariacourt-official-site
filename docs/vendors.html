@@ -41,30 +41,31 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-      fetch('data/vendors.json')
-        .then(r => r.json())
-        .then(items => {
-          const t = document.getElementById('vendors');
-          t.innerHTML = `
-            <thead>
-              <tr><th>Nama</th><th>Perkhidmatan</th><th>Telefon</th><th>Email</th></tr>
-            </thead>
-            <tbody>
-              ${items.map(v => `
-                <tr>
-                  <td>${v.name}</td>
-                  <td>${v.service}</td>
-                  <td>${v.phone || '-'}</td>
-                  <td>${v.email ? `<a href="mailto:${v.email}">${v.email}</a>` : '-'}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          `;
-        })
-        .catch(() => {
-          document.getElementById('vendors').outerHTML = '<p>Senarai vendor akan dikemas kini.</p>';
-        });
+    <script src="assets/js/site-config.js"></script>
+    <script type="module" src="assets/js/firebase-init.js"></script>
+    <script type="module" src="assets/js/auth-ui.js"></script>
+    <script type="module">
+      import { initSection } from './assets/js/cms-sections.js';
+      const table = document.getElementById('vendors');
+      const render = (items=[]) => {
+        if (!items.length) { table.outerHTML = '<p>Senarai vendor akan dikemas kini.</p>'; return; }
+        table.innerHTML = `
+          <thead>
+            <tr><th>Nama</th><th>Perkhidmatan</th><th>Telefon</th><th>Email</th></tr>
+          </thead>
+          <tbody>
+            ${items.map(v => `
+              <tr>
+                <td>${v.name || ''}</td>
+                <td>${v.service || ''}</td>
+                <td>${v.phone || '-'}</td>
+                <td>${v.email ? `<a href="mailto:${v.email}">${v.email}</a>` : '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
+      };
+      initSection({ sectionId:'vendors', targetEl: table, renderItems: render, fallbackUrl:'data/vendors.json' });
     </script>
   </body>
 </html>

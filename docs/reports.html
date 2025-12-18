@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/f-layout.css">
     <link rel="icon" href="assets/img/favicon.png">
   </head>
   <body>
@@ -28,10 +29,42 @@
       </div>
     </header>
 
-    <main id="kandungan" class="container" aria-labelledby="tajuk">
-      <h1 id="tajuk">Laporan AGM/EGM</h1>
-      <p>Minit mesyuarat, laporan kewangan, dan pembentangan.</p>
-      <ul id="reports" class="list"></ul>
+    <main id="kandungan" class="container" style="padding:16px 12px; max-width: 920px;">
+      <div class="card" style="padding:16px">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+          <div>
+            <h1 id="repTitle" style="margin:0 0 4px 0">Laporan AGM/EGM</h1>
+            <div class="muted-small">Tarikh: <span id="repDate">—</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div id="whoWrap" class="muted-small">Status: <span id="who">Tetamu</span></div>
+            <span id="authWidget" class="auth-widget"></span>
+            <button id="editToggle" class="btn-ghost" style="display:none">Edit</button>
+            <button id="saveBtn" class="btn" style="display:none">Simpan</button>
+            <button id="deleteBtn" class="btn-ghost" style="display:none">Padam</button>
+            <div id="statusMsg" class="muted-small" role="status" aria-live="polite"></div>
+          </div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--input-border);margin:12px 0"/>
+
+        <article id="repBody" class="prose" style="min-height:120px"></article>
+
+        <!-- Editor form (admin only) -->
+        <form id="editor" style="display:none; margin-top:12px">
+          <div class="form-row">
+            <label for="titleInput">Tajuk</label>
+            <input id="titleInput" placeholder="Tajuk laporan" />
+          </div>
+          <div class="form-row">
+            <label for="dateInput">Tarikh</label>
+            <input id="dateInput" type="date" />
+          </div>
+          <div class="form-row">
+            <label for="bodyInput">Kandungan (HTML ringkas dibenarkan)</label>
+            <textarea id="bodyInput" rows="12" placeholder="Isi kandungan laporan"></textarea>
+          </div>
+        </form>
+      </div>
     </main>
 
     <footer class="site-footer">
@@ -41,21 +74,135 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-      fetch('data/reports.json')
-        .then(r => r.json())
-        .then(items => {
-          const ul = document.getElementById('reports');
-          ul.innerHTML = items.map(item => `
-            <li>
-              <strong>${item.title}</strong> — <span class="meta">${item.date}</span>
-              ${item.link ? ` | <a href="${item.link}" target="_blank" rel="noopener">Muat Turun</a>` : ''}
-            </li>
-          `).join('');
-        })
-        .catch(() => {
-          document.getElementById('reports').innerHTML = '<li>Tiada laporan buat masa ini.</li>';
-        });
+    <!-- Optional per-site Firebase override (fill values inside) -->
+    <script src="assets/js/site-config.js"></script>
+    <script type="module" src="assets/js/firebase-init.js"></script>
+    <script type="module" src="assets/js/auth-ui.js"></script>
+    <script type="module">
+      import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+      import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+      const auth = window.__AUTH;
+      const els = {
+        title: document.getElementById('repTitle'),
+        date: document.getElementById('repDate'),
+        body: document.getElementById('repBody'),
+        who: document.getElementById('who'),
+        status: document.getElementById('statusMsg'),
+        editToggle: document.getElementById('editToggle'),
+        saveBtn: document.getElementById('saveBtn'),
+        deleteBtn: document.getElementById('deleteBtn'),
+        editor: document.getElementById('editor'),
+        titleInput: document.getElementById('titleInput'),
+        dateInput: document.getElementById('dateInput'),
+        bodyInput: document.getElementById('bodyInput')
+      };
+
+      let currentData = { id: 'latest', title: 'Laporan AGM/EGM', date: null, bodyHtml: '' };
+      let editing = false;
+      let currentExists = false;
+
+      function setStatus(msg, ok=true){ if (!els.status) return; els.status.textContent = msg || ''; els.status.style.color = ok ? 'var(--muted,#64748b)' : '#ef4444'; }
+
+      async function loadReport(){
+        setStatus('Memuat...');
+        try {
+          const ref = doc(window.__FIRESTORE, 'reports', 'latest');
+          const snap = await getDoc(ref);
+          currentExists = snap.exists();
+          if (currentExists) {
+            currentData = Object.assign({ id:'latest' }, snap.data() || {});
+          } else {
+            currentData = { id:'latest', title:'Laporan AGM/EGM', date:null, bodyHtml:'' };
+          }
+          renderView();
+          setStatus('');
+        } catch (e) {
+          console.error('loadReport err', e);
+          setStatus('Gagal memuatkan data.', false);
+        }
+      }
+
+      function renderView(){
+        els.title.textContent = currentData.title || 'Laporan AGM/EGM';
+        els.date.textContent = currentData.date || '—';
+        els.body.innerHTML = currentData.bodyHtml || '';
+        if (editing) {
+          els.titleInput.value = currentData.title || '';
+          els.dateInput.value = currentData.date || '';
+          els.bodyInput.value = currentData.bodyHtml || '';
+        }
+      }
+
+          currentExists = true;
+          currentData = Object.assign({}, currentData, payload);
+        editing = !!on;
+        els.editor.style.display = on ? 'block' : 'none';
+          els.deleteBtn.style.display = (auth.currentUser && currentExists) ? 'inline-block' : 'none';
+        els.saveBtn.style.display = on ? 'inline-block' : 'none';
+        els.editToggle.textContent = on ? 'Batal' : 'Edit';
+        renderView();
+      }
+
+      async function save(){
+        try {
+      async function remove(){
+        try {
+          const user = auth.currentUser;
+          if (!user) { setStatus('Perlu log masuk untuk padam.', false); return; }
+          const ok = confirm('Padam kandungan laporan ini? Tindakan ini tidak boleh diundur.');
+          if (!ok) return;
+          const ref = doc(window.__FIRESTORE, 'reports', currentData.id || 'latest');
+          await deleteDoc(ref);
+          currentExists = false;
+          currentData = { id:'latest', title:'Laporan AGM/EGM', date:null, bodyHtml:'' };
+          setEditing(false);
+          renderView();
+          els.deleteBtn.style.display = 'none';
+          setStatus('Dipadam.');
+        } catch (e) {
+          console.error('delete err', e);
+          setStatus(e.message || 'Gagal padam.', false);
+        }
+      }
+            updatedBy: user.email || user.uid
+          }, { merge: true });
+          currentData = Object.assign({}, currentData, payload);
+      els.deleteBtn.addEventListener('click', remove);
+          setEditing(false);
+          renderView();
+          setStatus('Disimpan.');
+        els.editToggle.style.display = u ? 'inline-block' : 'none';
+        els.deleteBtn.style.display = (u && currentExists) ? 'inline-block' : 'none';
+        if (!u) setEditing(false);
+      }
+
+      els.loginBtn.addEventListener('click', async () => {
+        const email = prompt('Email:');
+        if (!email) return;
+        const pass = prompt('Password:');
+        if (!pass) return;
+        setStatus('Log masuk...');
+        try {
+          await signInWithEmailAndPassword(auth, email.trim(), pass);
+          setStatus('');
+        } catch (e) {
+          console.error('login err', e); setStatus('Gagal log masuk.', false);
+        }
+      });
+
+      els.logoutBtn.addEventListener('click', async () => { try { await signOut(auth); } catch (e) {} });
+      els.editToggle.addEventListener('click', () => setEditing(!editing));
+      els.saveBtn.addEventListener('click', save);
+
+      onAuthStateChanged(auth, (u) => {
+        els.who.textContent = u ? (u.email || u.uid) : 'Tetamu';
+        els.loginBtn.style.display = u ? 'none' : 'inline-block';
+        els.logoutBtn.style.display = u ? 'inline-block' : 'none';
+        els.editToggle.style.display = u ? 'inline-block' : 'none';
+        if (!u) setEditing(false);
+      });
+
+      loadReport();
     </script>
   </body>
 </html>

@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../bc-visitor-dashboard"
+		},
+		{
+			"name": "senarai-konsultan-penduduk",
+			"path": "../../../senarai-konsultan-penduduk"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "banjariacourt-official-site"
+	}
+}

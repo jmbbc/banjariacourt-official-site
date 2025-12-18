@@ -41,23 +41,23 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-      fetch('data/announcements.json')
-        .then(r => r.json())
-        .then(items => {
-          const el = document.getElementById('announcements');
-          el.innerHTML = items.map(item => `
-            <article class="post">
-              <h3>${item.title}</h3>
-              <p class="meta">Tarikh: ${item.date}</p>
-              <p>${item.summary}</p>
-              ${item.link ? `<p><a class="btn" href="${item.link}" target="_blank" rel="noopener">Muat turun / Baca lanjut</a></p>` : ''}
-            </article>
-          `).join('');
-        })
-        .catch(() => {
-          document.getElementById('announcements').innerHTML = '<p>Tiada notis buat masa ini.</p>';
-        });
+    <script src="assets/js/site-config.js"></script>
+    <script type="module" src="assets/js/firebase-init.js"></script>
+    <script type="module" src="assets/js/auth-ui.js"></script>
+    <script type="module">
+      import { initSection } from './assets/js/cms-sections.js';
+      const target = document.getElementById('announcements');
+      const render = (items=[]) => {
+        target.innerHTML = (items.length ? items : []).map(item => `
+          <article class="post">
+            <h3>${item.title || ''}</h3>
+            <p class="meta">Tarikh: ${item.date || ''}</p>
+            <p>${item.summary || ''}</p>
+            ${item.link ? `<p><a class="btn" href="${item.link}" target="_blank" rel="noopener">Muat turun / Baca lanjut</a></p>` : ''}
+          </article>
+        `).join('') || '<p>Tiada notis buat masa ini.</p>';
+      };
+      initSection({ sectionId:'announcements', targetEl: target, renderItems: render, fallbackUrl:'data/announcements.json' });
     </script>
   </body>
 </html>

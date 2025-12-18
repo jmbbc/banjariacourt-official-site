@@ -41,23 +41,23 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-      fetch('data/activities.json')
-        .then(r => r.json())
-        .then(items => {
-          const el = document.getElementById('activities');
-          el.innerHTML = items.map(item => `
-            <div class="card">
-              <h3>${item.title}</h3>
-              <p class="meta">Tarikh: ${item.date}</p>
-              <p>${item.summary}</p>
-              ${item.photos && item.photos.length ? `<div class="thumbs">${item.photos.map(p => `<img src="${p}" alt="${item.title}">`).join('')}</div>` : ''}
-            </div>
-          `).join('');
-        })
-        .catch(() => {
-          document.getElementById('activities').innerHTML = '<p>Tiada aktiviti tersenarai buat masa ini.</p>';
-        });
+    <script src="assets/js/site-config.js"></script>
+    <script type="module" src="assets/js/firebase-init.js"></script>
+    <script type="module" src="assets/js/auth-ui.js"></script>
+    <script type="module">
+      import { initSection } from './assets/js/cms-sections.js';
+      const target = document.getElementById('activities');
+      const render = (items=[]) => {
+        target.innerHTML = (items.length ? items : []).map(item => `
+          <div class="card">
+            <h3>${item.title || ''}</h3>
+            <p class="meta">Tarikh: ${item.date || ''}</p>
+            <p>${item.summary || ''}</p>
+            ${item.photos && item.photos.length ? `<div class="thumbs">${item.photos.map(p => `<img src="${p}" alt="${item.title || ''}">`).join('')}</div>` : ''}
+          </div>
+        `).join('') || '<p>Tiada aktiviti tersenarai buat masa ini.</p>';
+      };
+      initSection({ sectionId:'activities', targetEl: target, renderItems: render, fallbackUrl:'data/activities.json' });
     </script>
   </body>
 </html>

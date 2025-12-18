@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/f-layout.css">
     <link rel="icon" href="assets/img/favicon.png">
   </head>
   <body>
@@ -29,43 +30,74 @@
     </header>
 
     <main>
-      <section id="utama" class="hero" aria-labelledby="tajuk-utama">
-        <div class="container">
-          <h1 id="tajuk-utama">Laman Rasmi Banjaria Court</h1>
-          <p>Maklumat terkini komuniti: notis, laporan, aktiviti dan kemudahan.</p>
-          <div class="hero-actions">
-            <a class="btn primary" href="announcements.html">Lihat Notis Terkini</a>
-            <a class="btn ghost" href="reports.html">Laporan AGM/EGM</a>
+      <!-- F-shape layout: strong top row, left vertical rail, right content -->
+      <section id="utama" class="hero hero-f" aria-labelledby="tajuk-utama">
+        <div class="container hero-row">
+          <div class="hero-text">
+            <h1 id="tajuk-utama">Laman Rasmi Banjaria Court</h1>
+            <p>Maklumat komuniti: notis, laporan, aktiviti dan kemudahan.</p>
+            <div class="hero-actions">
+              <a class="btn primary" href="announcements.html">Notis Terkini</a>
+              <a class="btn ghost" href="reports.html">Laporan AGM/EGM</a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="section quick-links" aria-labelledby="pantas">
-        <div class="container cards">
-          <h2 id="pantas" class="sr-only" style="position:absolute;left:-9999px">Pautan Pantas</h2>
-          <a class="card" href="announcements.html">
-            <h3>Notis Terkini</h3>
-            <p>Pengumuman rasmi JMB dan pengurusan.</p>
-          </a>
-          <a class="card" href="activities.html">
-            <h3>Aktiviti Komuniti</h3>
-            <p>Program sosial dan acara penduduk.</p>
-          </a>
-          <a class="card" href="facilities.html">
-            <h3>Kemudahan</h3>
-            <p>Senarai fasiliti dan peraturan penggunaan.</p>
-          </a>
-          <a class="card" href="forms.html">
-            <h3>Borang & Muat Turun</h3>
-            <p>Renovasi, pas pelawat, garis panduan.</p>
-          </a>
-        </div>
-      </section>
+      <section class="section f-layout" aria-label="Kandungan Utama">
+        <div class="container f-grid">
+          <!-- Left vertical rail: quick scan links (F spine) -->
+          <aside class="f-rail" aria-labelledby="pantas">
+            <h2 id="pantas" class="rail-title">Pautan Pantas</h2>
+            <nav class="rail-nav" aria-label="Pautan Pantas">
+              <a class="rail-item" href="announcements.html"><span class="rail-ico" aria-hidden="true">📢</span><span>Notis Terkini</span></a>
+              <a class="rail-item" href="activities.html"><span class="rail-ico" aria-hidden="true">🎪</span><span>Aktiviti Komuniti</span></a>
+              <a class="rail-item" href="facilities.html"><span class="rail-ico" aria-hidden="true">🏢</span><span>Kemudahan</span></a>
+              <a class="rail-item" href="forms.html"><span class="rail-ico" aria-hidden="true">📄</span><span>Borang & Muat Turun</span></a>
+              <a class="rail-item" href="vendors.html"><span class="rail-ico" aria-hidden="true">🛠️</span><span>Vendor</span></a>
+              <a class="rail-item" href="quotes.html"><span class="rail-ico" aria-hidden="true">💼</span><span>Sebut Harga</span></a>
+              <a class="rail-item" href="contact.html"><span class="rail-ico" aria-hidden="true">☎️</span><span>Hubungi</span></a>
+            </nav>
+          </aside>
 
-      <section class="section latest" aria-labelledby="terkini">
-        <div class="container">
-          <h2 id="terkini">Terkini</h2>
-          <ul id="latest-list" class="list"></ul>
+          <!-- Right content blocks: horizontal strokes of the F -->
+          <section class="f-content" aria-labelledby="terkini">
+            <h2 id="terkini" class="content-title">Terkini</h2>
+            <ul id="latest-list" class="list"></ul>
+
+            <div class="content-row">
+              <a class="card wide" href="announcements.html">
+                <h3>Notis & Pengumuman</h3>
+                <p>Kemaskini penting daripada JMB & pengurusan.</p>
+              </a>
+            </div>
+
+            <div class="content-row">
+              <div class="card-grid">
+                <a class="card" href="activities.html">
+                  <h3>Aktiviti Komuniti</h3>
+                  <p>Program sosial & acara penduduk.</p>
+                </a>
+                <a class="card" href="facilities.html">
+                  <h3>Kemudahan</h3>
+                  <p>Senarai fasiliti & peraturan.</p>
+                </a>
+              </div>
+            </div>
+
+            <div class="content-row">
+              <div class="card-grid">
+                <a class="card" href="forms.html">
+                  <h3>Borang & Muat Turun</h3>
+                  <p>Renovasi, pas pelawat, garis panduan.</p>
+                </a>
+                <a class="card" href="reports.html">
+                  <h3>Laporan AGM/EGM</h3>
+                  <p>Dokumen rasmi mesyuarat.</p>
+                </a>
+              </div>
+            </div>
+          </section>
         </div>
       </section>
     </main>
@@ -83,6 +115,10 @@
       </div>
     </footer>
 
+    <!-- Styles moved to assets/css/style.css -->
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/site-config.js"></script>
+    <script type="module" src="assets/js/firebase-init.js"></script>
+    <script type="module" src="assets/js/auth-ui.js"></script>
   </body>
 </html>

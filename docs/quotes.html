@@ -41,24 +41,24 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-      fetch('data/quotes.json')
-        .then(r => r.json())
-        .then(items => {
-          const el = document.getElementById('quotes');
-          el.innerHTML = items.map(item => `
-            <article class="post">
-              <h3>${item.title}</h3>
-              <p class="meta">Tarikh: ${item.date}</p>
-              <p>${item.summary || ''}</p>
-              ${item.rfq ? `<p><a class="btn" href="${item.rfq}" target="_blank" rel="noopener">Dokumen RFQ</a></p>` : ''}
-              ${item.result ? `<p><a class="btn" href="${item.result}" target="_blank" rel="noopener">Keputusan</a></p>` : ''}
-            </article>
-          `).join('');
-        })
-        .catch(() => {
-          document.getElementById('quotes').innerHTML = '<p>Tiada maklumat sebut harga buat masa ini.</p>';
-        });
+    <script src="assets/js/site-config.js"></script>
+    <script type="module" src="assets/js/firebase-init.js"></script>
+    <script type="module" src="assets/js/auth-ui.js"></script>
+    <script type="module">
+      import { initSection } from './assets/js/cms-sections.js';
+      const target = document.getElementById('quotes');
+      const render = (items=[]) => {
+        target.innerHTML = (items.length ? items : []).map(item => `
+          <article class="post">
+            <h3>${item.title || ''}</h3>
+            <p class="meta">Tarikh: ${item.date || ''}</p>
+            <p>${item.summary || ''}</p>
+            ${item.rfq ? `<p><a class="btn" href="${item.rfq}" target="_blank" rel="noopener">Dokumen RFQ</a></p>` : ''}
+            ${item.result ? `<p><a class="btn" href="${item.result}" target="_blank" rel="noopener">Keputusan</a></p>` : ''}
+          </article>
+        `).join('') || '<p>Tiada maklumat sebut harga buat masa ini.</p>';
+      };
+      initSection({ sectionId:'quotes', targetEl: target, renderItems: render, fallbackUrl:'data/quotes.json' });
     </script>
   </body>
 </html>

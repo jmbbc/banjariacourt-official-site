@@ -40,18 +40,18 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
-    <script>
-      fetch('data/forms.json')
-        .then(r => r.json())
-        .then(items => {
-          const ul = document.getElementById('forms');
-          ul.innerHTML = items.map(item => `
-            <li><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a> — <span class="meta">${item.category}</span></li>
-          `).join('');
-        })
-        .catch(() => {
-          document.getElementById('forms').innerHTML = '<li>Senarai borang akan dikemas kini.</li>';
-        });
+    <script src="assets/js/site-config.js"></script>
+    <script type="module" src="assets/js/firebase-init.js"></script>
+    <script type="module" src="assets/js/auth-ui.js"></script>
+    <script type="module">
+      import { initSection } from './assets/js/cms-sections.js';
+      const target = document.getElementById('forms');
+      const render = (items=[]) => {
+        target.innerHTML = (items.length ? items : []).map(item => `
+          <li><a href="${item.link || '#'}" target="_blank" rel="noopener">${item.title || ''}</a> — <span class="meta">${item.category || ''}</span></li>
+        `).join('') || '<li>Senarai borang akan dikemas kini.</li>';
+      };
+      initSection({ sectionId:'forms', targetEl: target, renderItems: render, fallbackUrl:'data/forms.json' });
     </script>
   </body>
 </html>
