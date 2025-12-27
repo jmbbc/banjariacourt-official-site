@@ -49,7 +49,12 @@ git push -u origin main
 Hak cipta © Banjaria Court. Kandungan dokumen (PDF/imej) adalah milik Banjaria Court/JMB.
 
 ## Perubahan Terkini (Ringkas)
-- 2025-12-27: Pembaikan mesra mudah alih — ditambah beberapa `@media` rules untuk padding dan tipografi, `nav` versi mudah alih ditambah overlay dan penguncian scroll badan, serta thumbnail imej kini menggunakan `loading="lazy"` untuk prestasi lebih baik.
-- 2025-12-27: Tambah demo hero full-screen (Daylight-style) dan seksyen `Shortcuts` yang kini dirender secara dinamik dari `docs/data/shortcuts.json`. Juga tambah ikon SVG untuk setiap shortcut dan perbaiki gaya kad (hover, fokus, responsif).
+- 2025-12-27: **✅ VERIFIED** — feat(ui): mobile-first hero, dynamic shortcuts & compact summary
+  - Hero full-screen mobile-first dengan butang tatal ke kandungan
+  - Shortcuts dirender dinamik dari `docs/data/shortcuts.json` dengan ikon SVG dan animasi masuk
+  - Summary kompak dari `docs/data/summary.json` (Dana Rizab, Tunggakan, Tarikh Bayaran, Ahli)
+  - Header mobile: ikon hamburger, overlay, admin lock icon, scroll-lock, dan fokus/escape behaviour
+  - Pelarasan CSS: spacing, accessibility, grid 2-column di saiz kecil (360px → 1-col, 720px → 2-col)
+  - Diuji pada 320/360/375/720/1024px — semua berfungsi dengan baik ✅
 
-(See `docs/assets/css/style.css`, `docs/assets/css/f-layout.css`, `docs/assets/js/main.js`, `docs/data/shortcuts.json`).
+(See `docs/assets/css/style.css`, `docs/assets/js/main.js`, `docs/assets/js/admin-mode.js`, `docs/data/shortcuts.json`, `docs/data/summary.json`).
