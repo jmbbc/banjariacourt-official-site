@@ -22,3 +22,16 @@
 
 /* Optional small spacing tune for hero actions */
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Improve mobile readability: hide left rail and tune hero on small screens */
+@media (max-width:900px){
+  .f-rail{display:none}
+  .hero-f .hero-row{padding-top:8px;padding-bottom:8px}
+  .hero-text h1{font-size:1.5rem}
+}
+
+@media (max-width:680px){
+  .card-grid{grid-template-columns:1fr}
+  .card.wide{padding:12px}
+}
+

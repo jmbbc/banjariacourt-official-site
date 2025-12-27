@@ -1,0 +1,8 @@
+[
+  {"id":"announcements","title":"Notis","href":"announcements.html","summary":"Notis & pengumuman","icon":"megaphone"},
+  {"id":"activities","title":"Aktiviti","href":"activities.html","summary":"Program komuniti","icon":"calendar"},
+  {"id":"facilities","title":"Kemudahan","href":"facilities.html","summary":"Senarai fasiliti & peraturan","icon":"building"},
+  {"id":"forms","title":"Borang","href":"forms.html","summary":"Muat turun & borang","icon":"file"},
+  {"id":"vendors","title":"Vendor","href":"vendors.html","summary":"Senarai vendor & perkhidmatan","icon":"tools"},
+  {"id":"reports","title":"Laporan","href":"reports.html","summary":"AGM/EGM & dokumen rasmi","icon":"document"}
+]
