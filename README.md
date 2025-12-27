@@ -47,3 +47,9 @@ git push -u origin main
 
 ## Lesen & Hak Cipta
 Hak cipta © Banjaria Court. Kandungan dokumen (PDF/imej) adalah milik Banjaria Court/JMB.
+
+## Perubahan Terkini (Ringkas)
+- 2025-12-27: Pembaikan mesra mudah alih — ditambah beberapa `@media` rules untuk padding dan tipografi, `nav` versi mudah alih ditambah overlay dan penguncian scroll badan, serta thumbnail imej kini menggunakan `loading="lazy"` untuk prestasi lebih baik.
+- 2025-12-27: Tambah demo hero full-screen (Daylight-style) dan seksyen `Shortcuts` yang kini dirender secara dinamik dari `docs/data/shortcuts.json`. Juga tambah ikon SVG untuk setiap shortcut dan perbaiki gaya kad (hover, fokus, responsif).
+
+(See `docs/assets/css/style.css`, `docs/assets/css/f-layout.css`, `docs/assets/js/main.js`, `docs/data/shortcuts.json`).

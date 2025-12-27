@@ -16,7 +16,12 @@
     <header class="site-header" role="banner">
       <div class="container header-wrap">
         <a class="brand" href="./">Banjaria Court</a>
-        <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Menu">
+          <span class="nav-icon" aria-hidden="true">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1h16M1 6h16M1 11h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-label">Menu</span>
+        </button>
         <nav id="nav" class="nav" aria-label="Utama">
           <a href="announcements.html">Notis</a>
           <a href="reports.html">AGM/EGM</a>
@@ -30,16 +35,31 @@
     </header>
 
     <main>
-      <!-- F-shape layout: strong top row, left vertical rail, right content -->
-      <section id="utama" class="hero hero-f" aria-labelledby="tajuk-utama">
-        <div class="container hero-row">
-          <div class="hero-text">
-            <h1 id="tajuk-utama">Laman Rasmi Banjaria Court</h1>
-            <p>Maklumat komuniti: notis, laporan, aktiviti dan kemudahan.</p>
-            <div class="hero-actions">
-              <a class="btn primary" href="announcements.html">Notis Terkini</a>
-              <a class="btn ghost" href="reports.html">Laporan AGM/EGM</a>
-            </div>
+      <!-- Full-screen hero (Daylight-inspired) -->
+      <section id="hero" class="hero-full" aria-label="Hero">
+        <div class="hero-inner container">
+          <h1 id="tajuk-utama">Laman Rasmi Banjaria Court</h1>
+          <p class="hero-lead">Maklumat komuniti: notis, laporan, aktiviti dan kemudahan.</p>
+          <a href="#shortcuts" class="btn ghost hero-cta">Teroka</a>
+        </div>
+        <button class="down-arrow" aria-label="Tatal ke kandungan">▾</button>
+      </section>
+
+      <!-- Shortcuts / Quick links (visible after hero) - full bleed background with centered inner container -->
+      <section id="shortcuts" class="shortcuts section" aria-label="Pantas">
+        <div class="shortcuts-inner">
+          <div id="shortcuts-grid" class="shortcuts-grid" aria-live="polite" aria-label="Pautan Pantas">
+            <!-- Shortcuts are rendered dynamically from data/shortcuts.json -->
+            <div class="card placeholder">Memuatkan pautan…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Compact summary / balance section -->
+      <section id="summary" class="summary section" aria-label="Ringkasan">
+        <div class="container">
+          <div id="summary-grid" class="summary-grid">
+            <div class="stat placeholder">Memuatkan ringkasan…</div>
           </div>
         </div>
       </section>
@@ -120,5 +140,6 @@
     <script src="assets/js/site-config.js"></script>
     <script type="module" src="assets/js/firebase-init.js"></script>
     <script type="module" src="assets/js/auth-ui.js"></script>
+    <script type="module" src="assets/js/admin-mode.js"></script>
   </body>
 </html>

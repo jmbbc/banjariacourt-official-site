@@ -1,4 +1,20 @@
-:root{--primary:#0B3D3B;--primary-700:#072b2a;--accent:#F2B705;--bg:#FFFFFF;--bg-alt:#fbfcfd;--text:#263238;--muted:#6b7b83;--light:#E5EEF1;--shadow:0 8px 24px rgba(11,61,59,.08)}
+:root{
+  --primary:#0B3D3B;
+  --primary-700:#072b2a;
+  --accent:#F2B705;
+  --bg:#FFFFFF;
+  --bg-alt:#fbfcfd;
+  --text:#263238;
+  --muted:#6b7b83;
+  --light:#E5EEF1;
+  --shadow:0 8px 24px rgba(11,61,59,.08);
+
+  /* Section background tokens */
+  --section-hero-bg: linear-gradient(180deg,#f3fbf8,#ffffff);
+  --section-shortcuts-bg: #f7fbff;
+  --section-summary-bg: #fffaf0;
+  --section-content-bg: var(--bg);
+}
 *{box-sizing:border-box}
 html:focus-within{scroll-behavior:smooth}
 
@@ -14,6 +30,7 @@ html:focus-within{scroll-behavior:smooth}
 	border-radius: 8px;
 	background: #f8fafc;
 }
+.cms-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
 .cms-bar .cms-editor {
 	width: 100%;
 }
@@ -27,31 +44,171 @@ html:focus-within{scroll-behavior:smooth}
 	border-radius: 8px;
 	background: #fff;
 }
+.cms-card {border:1px solid var(--light);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff;box-shadow:var(--shadow)}
+.cms-list {display:flex;flex-direction:column;gap:10px}
+.cms-card .form-row {display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.cms-card label {font-size:14px;color:var(--muted)}
+.cms-card input,.cms-card textarea {width:100%;padding:10px;border:1px solid var(--input-border,#cbd5e1);border-radius:8px;font-size:14px;box-sizing:border-box}
+.cms-card textarea {font-family:inherit;min-height:80px}
+.cms-inline-wrapper{position:relative}
+.cms-inline-btn{position:absolute;top:10px;right:10px;border:1px solid var(--input-border,#cbd5e1);background:#fff;border-radius:999px;padding:6px 8px;font-size:12px;cursor:pointer;box-shadow:var(--shadow)}
+.cms-inline-btn:hover{background:var(--bg-alt,#f8fafc)}
+.cms-card-focus{outline:2px solid var(--accent,#F2B705);outline-offset:2px}
+.cms-inline-editor{margin-top:10px;border:1px solid var(--light);border-radius:10px;padding:10px;background:#fff;box-shadow:var(--shadow)}
+.cms-inline-editor .form-row{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.cms-inline-editor label{font-size:13px;color:var(--muted)}
+.cms-inline-editor input,.cms-inline-editor textarea{width:100%;padding:8px;border:1px solid var(--input-border,#cbd5e1);border-radius:8px;font-size:14px;box-sizing:border-box}
+.cms-inline-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:16px;line-height:1.7}
 .container{max-width:1080px;margin:0 auto;padding:0 20px}
 .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 .skip-link:focus{position:fixed;left:20px;top:20px;width:auto;height:auto;background:#000;color:#fff;padding:8px 12px;border-radius:8px;z-index:1000}
 .site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--light);z-index:20;backdrop-filter:saturate(120%) blur(4px)}
-.header-wrap{display:flex;align-items:center;justify-content:space-between;min-height:64px}
+.header-wrap{display:flex;align-items:center;justify-content:flex-end;min-height:64px;position:relative}
+
+/* Center brand without affecting flow of header controls */
+.brand{position:absolute;left:50%;transform:translateX(-50%);z-index:21;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;text-align:center}
+
+/* Ensure nav, admin icon and toggle order: nav (left), admin icon (middle), toggle (right) */
+.nav{order:1;margin-left:8px}
+.admin-icon{order:2}
+.nav-toggle{order:3}
+
+/* On very small screens, reduce brand size to avoid overlap */
+@media (max-width:420px){
+  .brand{font-size:18px;max-width:50%}
+}
+
 .brand{font-family:Poppins,Inter,sans-serif;font-weight:700;color:var(--primary);text-decoration:none;font-size:22px;letter-spacing:.2px}
 .nav{display:flex;gap:4px;align-items:center}
 .nav a{text-decoration:none;color:#3a3a3a;padding:8px 12px;border-radius:8px}
 .nav a.active,.nav a:hover{background:var(--light);color:var(--primary)}
 .nav-toggle{display:none;background:transparent;border:0;color:var(--primary);padding:8px;border-radius:8px}
+
+/* Nav toggle: compact circular button with icon */
+.nav-toggle{width:44px;height:44px;border-radius:999px;border:1px solid transparent;background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:6px;color:var(--primary);transition:background .12s ease,border-color .12s ease}
+.nav-toggle .nav-icon{display:inline-flex;align-items:center;justify-content:center}
+.nav-toggle .nav-label{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.nav-toggle:focus{outline:2px solid var(--accent);outline-offset:2px}
+
+/* when toggle has `open` class, animate icon to a cross */
+.nav-toggle.open .nav-icon svg path{stroke-linecap:round}
+.nav-toggle.open .nav-icon svg{transform:rotate(90deg);transition:transform .18s ease}
+
+/* === Admin lock icon (always visible in header) === */
+.admin-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--primary);margin-left:8px;padding:6px;cursor:pointer;transition:background .12s ease,color .12s ease,transform .08s ease}
+.admin-icon:hover{background:var(--bg-alt)}
+.admin-icon.is-admin{border-color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.admin-icon.on{background:var(--primary);color:#fff}
+.admin-icon:focus{outline:2px solid var(--accent);outline-offset:2px}
 @media (max-width:768px){
-	.nav{display:none;position:absolute;top:64px;right:0;left:0;background:#fff;border-bottom:1px solid var(--light);padding:8px 12px}
-	.nav.open{display:flex;flex-wrap:wrap}
-	.nav a{padding:10px 12px}
+	/* Hide inline nav by default and show a full-screen, centered menu when open */
+	.nav{display:none}
 	.nav-toggle{display:inline-flex;align-items:center;gap:8px}
+
+	.nav.open{display:flex;position:fixed;inset:0;margin:0;padding:40px 20px;background:rgba(255,255,255,0.98);z-index:40;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+
+	/* Menu items as large tappable buttons */
+	.nav a{display:block;padding:14px 18px;border-radius:12px;background:transparent;color:var(--text);font-size:1.125rem;text-decoration:none}
+	.nav a:hover,.nav a:focus{background:var(--bg-alt);color:var(--primary)}
+
+	/* Make buttons inside nav look like menu items */
+	.nav .btn{display:block;padding:12px 16px;border-radius:12px;background:transparent;color:var(--text);font-size:1.05rem;text-align:center;border:1px solid transparent}
+	.nav .btn.ghost{border-color:transparent}
+	.nav .btn.ghost:hover{background:var(--bg-alt)}
+
+	/* Keep nav links stacked and centered */
+	.nav.open .auth-widget{position:static;margin-top:8px}
 }
 .hero{background:linear-gradient(180deg,var(--bg-alt),#fff);padding:72px 0;border-bottom:1px solid var(--light)}
 .hero h1{font-family:Poppins,Inter,sans-serif;font-weight:700;margin:0 0 12px;font-size:34px}
 .hero p{max-width:680px;color:#424b53}
 .hero-actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* === Full-screen hero (Daylight-like) === */
+.hero-full{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;background:var(--section-hero-bg);padding:40px 0;text-align:center;color:var(--text)}
+.hero-inner{max-width:720px;padding:8px}
+.hero-inner h1{font-family:Poppins,Inter,sans-serif;font-weight:700;margin:0 0 .5rem;font-size:clamp(1.6rem,6vw,2.4rem)}
+.hero-lead{color:var(--muted);margin:0 0 1rem;font-size:clamp(0.95rem,3.5vw,1.05rem)}
+.hero-cta{min-width:140px}
+.down-arrow{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);border:0;background:transparent;font-size:22px;padding:8px;color:var(--muted);cursor:pointer}
+
+/* Section backgrounds */
+.shortcuts.section{background:var(--section-shortcuts-bg);min-height:100vh;display:flex;align-items:center;padding:40px 0}
+.shortcuts-inner{max-width:1080px;margin:0 auto;padding:0 20px;width:100%}
+.summary.section{background:var(--section-summary-bg);padding-top:16px;padding-bottom:16px}
+.f-layout{background:var(--section-content-bg)}
+
+/* Make shortcuts shorter on very small screens */
+@media (max-width:480px){
+  .shortcuts.section{min-height:70vh;padding:28px 0}
+  .shortcuts-inner{padding:0 16px}
+}
+
+/* Shortcuts grid */
+/* Use a smaller min column so layout can show 2 columns on narrow viewports */
+.shortcuts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:0 auto}
+.shortcuts .card{padding:12px;border-radius:10px;border:1px solid var(--light);background:#fff;text-decoration:none;color:inherit;display:block}
+.shortcuts .card h3{margin:0 0 6px;font-size:1rem}
+.shortcuts .card p{margin:0;color:var(--muted);font-size:0.92rem}
+
+/* Small devices tune */
+@media (max-width:480px){
+  .down-arrow{bottom:12px}
+  .hero-inner h1{font-size:1.5rem}
+  .hero-full{padding:28px 0}
+}
+
+/* Shortcuts card icon & layout */
+.shortcut{display:flex;gap:12px;align-items:center}
+.shortcut .shortcut-icon{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#f6faf9,#fff);border:1px solid var(--light);box-shadow:var(--shadow);color:var(--primary)}
+.shortcut .shortcut-body h3{margin:0 0 6px;font-size:1.05rem}
+.shortcut .shortcut-body p{margin:0;color:var(--muted);font-size:0.95rem}
+
+/* Card hover/focus */
+.shortcuts .card:focus,.shortcuts .card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(11,61,59,.06)}
+.shortcuts .card{transition:transform .12s ease,box-shadow .12s ease}
+
+/* Make grid denser on narrow screens: two columns until very small devices */
+@media (max-width:720px){
+  .shortcuts-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .shortcuts .card{padding:10px}
+  .shortcut .shortcut-icon{width:44px;height:44px}
+}
+@media (max-width:360px){
+  .shortcuts-grid{grid-template-columns:1fr}
+}
+
+/* === Compact summary (section 3) === */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;align-items:stretch}
+.summary .stat{display:flex;flex-direction:column;align-items:flex-start;padding:10px;border-radius:8px;border:1px solid var(--light);background:#fff}
+.summary .stat .value{font-size:1.05rem;font-weight:700}
+.summary .stat .label{font-size:0.86rem;color:var(--muted);margin-top:6px}
+.summary .stat.small{padding:8px}
+
+/* compact: two columns on narrow screens */
+@media (max-width:720px){
+  .summary-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+}
+@media (max-width:420px){
+  .summary-grid{grid-template-columns:repeat(2,1fr);gap:6px}
+  .summary .stat .value{font-size:1rem}
+  .summary .stat .label{font-size:0.78rem}
+}
+@media (max-width:320px){
+  .summary-grid{grid-template-columns:1fr}
+}
+
 .btn{display:inline-block;border:1px solid var(--light);padding:12px 16px;border-radius:10px;text-decoration:none;color:var(--text);box-shadow:var(--shadow);transition:transform .08s ease}
 .btn:hover{transform:translateY(-1px)}
 .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
 .btn.ghost{background:#fff;border-color:var(--primary);color:var(--primary)}
+.admin-btn{margin-left:8px;align-self:center}
+.admin-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--input-border,#cbd5e1);border-radius:999px;background:#fff;color:var(--text);cursor:pointer;box-shadow:var(--shadow);transition:background .15s ease,border-color .15s ease}
+.admin-toggle .toggle-knob{width:16px;height:16px;border-radius:999px;background:#fff;border:1px solid var(--input-border,#cbd5e1);box-shadow:0 2px 6px rgba(0,0,0,.12);transition:transform .15s ease,background .15s ease,border-color .15s ease}
+.admin-toggle.on{background:var(--primary,#0B3D3B);color:#fff;border-color:var(--primary,#0B3D3B)}
+.admin-toggle.on .toggle-knob{transform:translateX(10px);background:#fff;border-color:rgba(255,255,255,.7)}
+.admin-toggle:hover{background:var(--bg-alt,#f8fafc)}
 .section{padding:28px 0}
 .section h2{font-family:Poppins,Inter,sans-serif;font-size:24px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:24px 0}
@@ -69,4 +226,42 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 .table th{background:var(--bg-alt);font-weight:600}
 .site-footer{border-top:1px solid var(--light);margin-top:40px;padding:28px 0;background:#fafafa}
 .footer-wrap{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* === Mobile improvements (mobile-first tuning) === */
+/* Reduce hero padding and headline size on narrow screens */
+@media (max-width:480px){
+  .hero{padding:32px 0;border-bottom:1px solid var(--light)}
+  .hero h1{font-size:clamp(1.25rem,6vw,1.5rem);margin-bottom:8px}
+  .hero p{font-size:0.95rem}
+  .header-wrap{min-height:56px}
+  .nav-toggle{min-height:44px;min-width:44px;padding:10px;border-radius:10px}
+  .btn{padding:12px 16px;min-height:44px;border-radius:10px}
+  .card{padding:14px}
+  .rail-item{padding:12px}
+  .thumbs img{width:100%;height:auto}
+}
+
+/* Hide the left rail on smaller viewports to reduce clutter */
+@media (max-width:900px){
+  .f-rail{display:none}
+}
+
+/* Slightly reduce container side padding on very small devices */
+@media (max-width:420px){
+  .container{padding:0 16px}
+}
+
+/* Prevent body scrolling when nav is open and add an overlay element (managed by JS) */
+body.nav-locked{overflow:hidden}
+
+/* Overlay placed after nav in header when open */
+.nav-overlay{display:none}
+.nav-overlay.open{display:block;position:fixed;inset:64px 0 0 0;background:rgba(0,0,0,.18);z-index:15}
+
+/* Make interactive elements more finger-friendly */
+@media (max-width:768px){
+  .nav a{padding:12px 16px}
+  .nav-toggle{font-size:16px}
+}
+
 

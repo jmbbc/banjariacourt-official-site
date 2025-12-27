@@ -1,0 +1,6 @@
+[
+  { "id": "reserve_fund", "label": "Dana Rizab", "value": "RM 12,450", "meta": "Menurut laporan terakhir" },
+  { "id": "outstanding", "label": "Tunggakan", "value": "RM 1,200", "meta": "Jumlah kini" },
+  { "id": "next_payment", "label": "Tarikh Bayaran", "value": "18 Jan 2026", "meta": "Bayaran seterusnya" },
+  { "id": "members", "label": "Ahli", "value": "120", "meta": "Unit berdaftar" }
+]
