@@ -333,6 +333,8 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
       setStatus('Menyimpan...');
       const user = auth?.currentUser;
       if (!user) { setStatus('Perlu log masuk untuk simpan.', false); return; }
+      if (!isAdmin) { setStatus('Akses hanya untuk admin.', false); return; }
+      if (!adminMode) { setStatus('Hidupkan Admin Mode untuk simpan.', false); return; }
       const parsed = readFormItems();
       if (!Array.isArray(parsed)) throw new Error('Data mesti dalam bentuk array.');
       await persist(parsed);
@@ -345,16 +347,27 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
   async function persist(newItems) {
     const user = auth?.currentUser;
     if (!db) throw new Error('Firestore tidak tersedia.');
+    if (!isAdmin) throw new Error('Akses hanya untuk admin.');
+    if (!adminMode) throw new Error('Admin Mode perlu dihidupkan.');
     const ref = doc(db, 'content', sectionId);
-    await setDoc(ref, {
-      items: newItems,
-      updatedAt: serverTimestamp(),
-      updatedBy: user?.email || user?.uid || 'admin'
-    }, { merge: true });
-    items = newItems;
-    render();
-    lastUpdated = new Date().toLocaleString();
-    setStatus('Disimpan.');
+    try {
+      await setDoc(ref, {
+        items: newItems,
+        updatedAt: serverTimestamp(),
+        updatedBy: user?.email || user?.uid || 'admin'
+      }, { merge: true });
+      items = newItems;
+      render();
+      lastUpdated = new Date().toLocaleString();
+      setStatus('Disimpan.');
+    } catch (e) {
+      console.error('persist failed', e);
+      if (e?.code === 'permission-denied') {
+        setStatus('Akses Firestore ditolak. Pastikan akaun admin dan peraturan Firestore membenarkan penulisan.', false);
+        return;
+      }
+      throw e;
+    }
   }
 
   async function removeAll() {

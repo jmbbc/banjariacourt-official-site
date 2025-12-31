@@ -64,14 +64,14 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 .skip-link:focus{position:fixed;left:20px;top:20px;width:auto;height:auto;background:#000;color:#fff;padding:8px 12px;border-radius:8px;z-index:1000}
 .site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--light);z-index:20;backdrop-filter:saturate(120%) blur(4px)}
-.header-wrap{display:flex;align-items:center;justify-content:flex-end;min-height:64px;position:relative}
+.header-wrap{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-height:64px;position:relative;padding:0 64px}
 
-/* Center brand without affecting flow of header controls */
-.brand{position:absolute;left:50%;transform:translateX(-50%);z-index:21;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;text-align:center}
+/* Center brand on desktop; keep in flow on very small screens */
+.brand{position:absolute;left:50%;transform:translateX(-50%);z-index:21;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:50%;text-align:center}
 
 /* Ensure nav, admin icon and toggle order: nav (left), admin icon (middle), toggle (right) */
-.nav{order:1;margin-left:8px}
-.admin-icon{order:2}
+.nav{order:1;margin-left:auto}
+.admin-icon{order:2;margin-left:auto;margin-right:8px}
 .nav-toggle{order:3}
 
 /* On very small screens, reduce brand size to avoid overlap */
@@ -80,10 +80,10 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 }
 
 .brand{font-family:Poppins,Inter,sans-serif;font-weight:700;color:var(--primary);text-decoration:none;font-size:22px;letter-spacing:.2px}
-.nav{display:flex;gap:4px;align-items:center}
+.nav{display:none;gap:4px;align-items:center}
 .nav a{text-decoration:none;color:#3a3a3a;padding:8px 12px;border-radius:8px}
 .nav a.active,.nav a:hover{background:var(--light);color:var(--primary)}
-.nav-toggle{display:none;background:transparent;border:0;color:var(--primary);padding:8px;border-radius:8px}
+.nav-toggle{display:inline-flex;background:transparent;border:0;color:var(--primary);padding:8px;border-radius:8px}
 
 /* Nav toggle: compact circular button with icon */
 .nav-toggle{width:44px;height:44px;border-radius:999px;border:1px solid transparent;background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:6px;color:var(--primary);transition:background .12s ease,border-color .12s ease}
@@ -102,23 +102,38 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 .admin-icon.on{background:var(--primary);color:#fff}
 .admin-icon:focus{outline:2px solid var(--accent);outline-offset:2px}
 @media (max-width:768px){
-	/* Hide inline nav by default and show a full-screen, centered menu when open */
-	.nav{display:none}
-	.nav-toggle{display:inline-flex;align-items:center;gap:8px}
+  /* Fix header layout: center brand, pin controls to the right */
+  .header-wrap{padding:0 20px;justify-content:center}
+  .brand{position:absolute;left:50%;transform:translateX(-50%);max-width:70%;text-align:center}
+  .nav-toggle{position:absolute;right:16px;top:50%;transform:translateY(-50%)}
+  /* Place admin icon to the left of the nav toggle to avoid overlap with brand */
+  .admin-icon{position:absolute;right:64px;top:50%;transform:translateY(-50%);margin:0}
+  /* Keep brand centered on mobile with a bit more room */
+  .brand{position:absolute;left:50%;transform:translateX(-50%);max-width:60%;text-align:center}
 
-	.nav.open{display:flex;position:fixed;inset:0;margin:0;padding:40px 20px;background:rgba(255,255,255,0.98);z-index:40;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+  /* Hide inline nav by default and show a full-screen menu when open */
+  .nav{display:none}
+  .nav-toggle{display:inline-flex;align-items:center;gap:8px}
 
-	/* Menu items as large tappable buttons */
-	.nav a{display:block;padding:14px 18px;border-radius:12px;background:transparent;color:var(--text);font-size:1.125rem;text-decoration:none}
+	/* Reduced spacing so items are closer together on mobile. Limit height so nav does not cover hero entirely */
+	.nav.open{display:flex;position:fixed;inset:64px 0 0 0;margin:0;padding:12px 16px;background:rgba(255,255,255,0.98);backdrop-filter:blur(6px);box-shadow:0 12px 40px rgba(0,0,0,0.12);z-index:10001;align-items:flex-start;justify-content:flex-start;flex-direction:column;gap:6px;max-height:calc(100vh - 64px);overflow:auto;border-top-left-radius:12px;border-top-right-radius:12px;animation:nav-slide .28s ease both}
+	@keyframes nav-slide{0%{transform:translateY(-6px);opacity:0}100%{transform:translateY(0);opacity:1}}
+
+	/* Menu items: tighter padding and slightly smaller font to reduce distance */
+	.nav a{display:block;padding:8px 12px;border-radius:8px;background:transparent;color:var(--text);font-size:1rem;line-height:1.1;text-decoration:none}
 	.nav a:hover,.nav a:focus{background:var(--bg-alt);color:var(--primary)}
 
 	/* Make buttons inside nav look like menu items */
-	.nav .btn{display:block;padding:12px 16px;border-radius:12px;background:transparent;color:var(--text);font-size:1.05rem;text-align:center;border:1px solid transparent}
+	.nav .btn{display:block;padding:10px 14px;border-radius:8px;background:transparent;color:var(--text);font-size:1.05rem;text-align:center;border:1px solid transparent}
 	.nav .btn.ghost{border-color:transparent}
 	.nav .btn.ghost:hover{background:var(--bg-alt)}
 
-	/* Keep nav links stacked and centered */
-	.nav.open .auth-widget{position:static;margin-top:8px}
+	/* Hide auth/login widget inside the mobile nav since it's already present in the hero */
+	.nav.open .auth-widget{display:none}
+	/* Also hide admin login/logout buttons inside the mobile nav to avoid duplication */
+	.nav.open .admin-btn{display:none}
+	.nav.open #adminLoginBtn{display:none}
+	.nav.open #adminLogoutBtn{display:none}
 }
 .hero{background:linear-gradient(180deg,var(--bg-alt),#fff);padding:72px 0;border-bottom:1px solid var(--light)}
 .hero h1{font-family:Poppins,Inter,sans-serif;font-weight:700;margin:0 0 12px;font-size:34px}
@@ -126,8 +141,16 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 .hero-actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
 
 /* === Full-screen hero (Daylight-like) === */
-.hero-full{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;background:var(--section-hero-bg);padding:40px 0;text-align:center;color:var(--text)}
-.hero-inner{max-width:720px;padding:8px}
+.hero-full{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;background:var(--section-hero-bg);background-color:#f3fbf8;padding:40px 0;text-align:center;color:var(--text)}
+/* Animated gradient for hero - apply by adding `hero-animated` class to the section */
+.hero-animated{background:linear-gradient(270deg,#ff7a7a,#7afcff,#9b7aff);background-size:600% 600%;animation:hero-gradient 16s ease infinite;color:var(--text)}
+@keyframes hero-gradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@media (prefers-reduced-motion: reduce){.hero-animated{animation:none;background-size:auto}}
+@media (max-width:420px){.hero-animated{animation:none;background:linear-gradient(180deg,#ffecd2,#f3f7ff);background-size:cover;color:var(--text)}}
+/* Particles system inside hero */
+.hero-particles{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0.9}
+/* Ensure hero content stays above particles */
+.hero-full .hero-inner{position:relative;z-index:1;max-width:720px;padding:8px}
 .hero-inner h1{font-family:Poppins,Inter,sans-serif;font-weight:700;margin:0 0 .5rem;font-size:clamp(1.6rem,6vw,2.4rem)}
 .hero-lead{color:var(--muted);margin:0 0 1rem;font-size:clamp(0.95rem,3.5vw,1.05rem)}
 .hero-cta{min-width:140px}
@@ -253,15 +276,42 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 
 /* Prevent body scrolling when nav is open and add an overlay element (managed by JS) */
 body.nav-locked{overflow:hidden}
-
-/* Overlay placed after nav in header when open */
-.nav-overlay{display:none}
-.nav-overlay.open{display:block;position:fixed;inset:64px 0 0 0;background:rgba(0,0,0,.18);z-index:15}
-
+/* Rebuilt mobile overlay shell */
+.mobile-shell{display:none;position:fixed;inset:0;z-index:10000}
+.mobile-shell.open{display:block}
+.mobile-shell .mobile-dim{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(2px);animation:dim-in .2s ease}
+.mobile-shell .mobile-panel{position:absolute;top:72px;left:50%;right:auto;bottom:auto;max-height:calc(100vh - 160px);width:min(520px,calc(100% - 24px));transform:translate(-50%,0);background:#fff;border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,.16);padding:18px 20px 24px;overflow:auto;animation:panel-in .25s ease}
+@keyframes dim-in{from{opacity:0}to{opacity:1}}
+@keyframes panel-in{0%{transform:translate(-50%,-8px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}
+.mobile-links{display:flex;flex-direction:column;gap:8px}
+.mobile-links a{display:block;padding:12px 12px;border-radius:10px;background:#f7fafc;color:var(--text);text-decoration:none;border:1px solid var(--light)}
+.mobile-links a:focus,.mobile-links a:hover{background:#eef5ff;color:var(--primary)}
 /* Make interactive elements more finger-friendly */
 @media (max-width:768px){
   .nav a{padding:12px 16px}
   .nav-toggle{font-size:16px}
 }
+
+/* Admin panel modal */
+.admin-panel{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:12000;padding:16px}
+.admin-panel.open{display:flex}
+.admin-panel__card{width:min(420px,100%);background:#fff;border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,.16);padding:20px;display:flex;flex-direction:column;gap:14px}
+.admin-panel__header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.admin-panel__header h2{margin:0;font-size:1.1rem}
+.admin-panel__status{margin:0;color:var(--muted);font-size:.9rem}
+.admin-panel__close{border:0;background:#f1f5f9;border-radius:999px;width:36px;height:36px;font-size:18px;cursor:pointer}
+.admin-panel__body{display:flex;flex-direction:column;gap:16px}
+.admin-panel__section{display:flex;flex-direction:column;gap:8px}
+.admin-panel__label{font-weight:600;font-size:.95rem;margin:0}
+.admin-panel__input{width:100%;padding:10px 12px;border:1px solid var(--input-border,#cbd5e1);border-radius:10px;font-size:15px}
+.admin-panel__btn{padding:10px 12px;border-radius:10px;border:1px solid var(--input-border,#cbd5e1);background:#f8fafc;cursor:pointer;font-weight:600}
+.admin-panel__btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.admin-panel__btn:focus,.admin-panel__input:focus{outline:2px solid var(--accent);outline-offset:2px}
+.admin-panel__msg{color:#d14343;font-size:.85rem;min-height:18px}
+.admin-panel__hint{color:var(--muted);margin:0;font-size:.85rem}
+.admin-panel__toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid var(--light);border-radius:12px;background:#f9fafb}
+.admin-panel__btn-toggle{min-width:72px;padding:10px 12px;border-radius:999px;border:1px solid var(--input-border,#cbd5e1);background:#fff;cursor:pointer;font-weight:700}
+.admin-panel__btn-toggle.is-on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.admin-panel-open{overflow:hidden}
 
 

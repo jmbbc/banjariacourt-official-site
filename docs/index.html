@@ -30,13 +30,16 @@
           <a href="vendors.html">Vendor</a>
           <a href="quotes.html">Sebut Harga</a>
           <a href="contact.html">Hubungi</a>
+          <!-- Hidden shortcuts source for overlay use -->
+          <div id="nav-shortcuts" class="nav-shortcuts" aria-hidden="true"></div>
         </nav>
       </div>
     </header>
 
     <main>
       <!-- Full-screen hero (Daylight-inspired) -->
-      <section id="hero" class="hero-full" aria-label="Hero">
+      <section id="hero" class="hero-full hero-animated" aria-label="Hero">
+        <div id="tsparticles" class="hero-particles" aria-hidden="true"></div>
         <div class="hero-inner container">
           <h1 id="tajuk-utama">Laman Rasmi Banjaria Court</h1>
           <p class="hero-lead">Maklumat komuniti: notis, laporan, aktiviti dan kemudahan.</p>
@@ -136,6 +139,8 @@
     </footer>
 
     <!-- Styles moved to assets/css/style.css -->
+    <!-- tsParticles disabled due to CSP 'unsafe-eval' debugging. Uncomment if CSP allows. -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script> -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/site-config.js"></script>
     <script type="module" src="assets/js/firebase-init.js"></script>

@@ -12,63 +12,92 @@ document.addEventListener('DOMContentLoaded', () => {
     navEl.appendChild(slot);
   }
 
-  // Mobile nav toggle (improved)
+  // Mobile nav rebuilt: dedicated overlay shell with shortcuts inside
+  let closeMobileMenu = () => {};
+  let isMobileMenuOpen = () => false;
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.getElementById('nav');
   if (toggle && nav) {
-    // create overlay once
-    let overlay = document.querySelector('.nav-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.className = 'nav-overlay';
-      document.body.appendChild(overlay);
-      overlay.addEventListener('click', () => {
-        nav.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        overlay.classList.remove('open');
-        document.body.classList.remove('nav-locked');
+    const shell = document.createElement('div');
+    shell.className = 'mobile-shell';
+    shell.setAttribute('aria-hidden', 'true');
+    shell.innerHTML = `
+      <div class="mobile-dim"></div>
+      <div class="mobile-panel" role="dialog" aria-modal="true" aria-label="Menu mudah alih">
+        <nav class="mobile-links" aria-label="Pautan utama"></nav>
+      </div>
+    `;
+    document.body.appendChild(shell);
+
+    const dim = shell.querySelector('.mobile-dim');
+    const mobileLinks = shell.querySelector('.mobile-links');
+
+    const setLabel = (text) => {
+      const label = toggle.querySelector('.nav-label');
+      if (label) label.textContent = text;
+    };
+
+    const closeMenu = () => {
+      shell.classList.remove('open');
+      shell.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.classList.remove('open');
+      document.body.classList.remove('nav-locked');
+      setLabel('Menu');
+      const headerEl = document.querySelector('.site-header'); if (headerEl) headerEl.style.zIndex = '';
+      toggle.focus();
+    };
+
+    const populateLinks = () => {
+      if (!mobileLinks || !nav) return;
+      mobileLinks.innerHTML = '';
+
+      // Support both legacy flat links and Bootstrap nav links wrapped in <li>
+      const links = nav.querySelectorAll('a.nav-link, :scope > a');
+      links.forEach((link) => {
+        const a = link.cloneNode(true);
+        a.classList.add('mobile-link');
+        a.addEventListener('click', closeMenu);
+        mobileLinks.appendChild(a);
       });
-    }
+    };
+
+    const openMenu = () => {
+      populateLinks();
+      shell.classList.add('open');
+      shell.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.classList.add('open');
+      document.body.classList.add('nav-locked');
+      setLabel('Tutup');
+      const headerEl = document.querySelector('.site-header'); if (headerEl) headerEl.style.zIndex = '0';
+      mobileLinks?.querySelector('a')?.focus();
+    };
 
     toggle.addEventListener('click', () => {
-      const isOpen = nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
-      // update visible label (kept in .nav-label to preserve SVG)
-      const label = toggle.querySelector('.nav-label');
-      if (label) label.textContent = isOpen ? 'Tutup' : 'Menu';
-      toggle.classList.toggle('open', isOpen);
-      overlay.classList.toggle('open', isOpen);
-      document.body.classList.toggle('nav-locked', isOpen);
-      if (isOpen) {
-        nav.querySelector('a')?.focus();
-      } else {
-        toggle.focus();
-      }
+      const isOpen = shell.classList.contains('open');
+      if (isOpen) closeMenu(); else openMenu();
     });
 
-    // close with Escape key when nav open
+    dim?.addEventListener('click', closeMenu);
+
+    // close with Escape key when open
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && nav.classList.contains('open')){
-        nav.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        overlay.classList.remove('open');
-        document.body.classList.remove('nav-locked');
-        const label = toggle.querySelector('.nav-label'); if (label) label.textContent = 'Menu';
-        toggle.classList.remove('open');
-        toggle.focus();
+      if (e.key === 'Escape' && shell.classList.contains('open')) {
+        closeMenu();
       }
     });
 
-    // ensure nav closes when resizing to desktop width
+    // ensure menu closes when resizing to desktop width
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 768 && nav.classList.contains('open')){
-        nav.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        overlay.classList.remove('open');
-        document.body.classList.remove('nav-locked');
-        toggle.textContent = 'Menu';
+      if (window.innerWidth > 768 && shell.classList.contains('open')) {
+        closeMenu();
       }
     });
+
+    // expose helpers for other handlers
+    closeMobileMenu = closeMenu;
+    isMobileMenuOpen = () => shell.classList.contains('open');
   }
 
   // Home: show latest 3 announcements
@@ -100,16 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
       shortcuts.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // close nav if open (mobile)
-      const overlayEl = document.querySelector('.nav-overlay');
-      if (nav && nav.classList.contains('open')){
-        nav.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        overlayEl?.classList.remove('open');
-        document.body.classList.remove('nav-locked');
-        toggle.classList.remove('open');
-        const label = toggle.querySelector('.nav-label'); if (label) label.textContent = 'Menu';
-      }
+      // close mobile menu if open
+      if (isMobileMenuOpen()) closeMobileMenu();
     });
   });
 
@@ -147,6 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         });
 
+        // Make shortcut links reliably responsive (close overlays / nav if still open)
+        shortcutsGrid.addEventListener('click', (e) => {
+          const a = e.target.closest('a.card.shortcut');
+          if (!a) return;
+          if (isMobileMenuOpen()) closeMobileMenu();
+          // allow default navigation to proceed
+        });
+
         // Render compact summary (section 3) dynamically from data/summary.json
         const summaryGrid = document.getElementById('summary-grid');
         if (summaryGrid) {
@@ -169,5 +198,33 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(() => {
         shortcutsGrid.innerHTML = '<div class="card">Tiada pautan untuk dipaparkan.</div>';
       });
+  }
+
+  // Init tsparticles for hero (subtle, low-cost particle effect)
+  try {
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const smallScreen = window.innerWidth && window.innerWidth < 420;
+    if (!prefersReduced && !smallScreen && document.getElementById('tsparticles') && window.tsParticles){
+      tsParticles.load('tsparticles', {
+        particles: {
+          number: { value: 30, density: { enable: true, area: 800 } },
+          color: { value: '#ffffff' },
+          shape: { type: 'circle' },
+          opacity: { value: 0.12 },
+          size: { value: { min: 1, max: 4 } },
+          move: { enable: true, speed: 0.6, direction: 'none', outModes: { default: 'out' } },
+          links: { enable: true, distance: 120, color: '#ffffff', opacity: 0.06, width: 1 }
+        },
+        interactivity: {
+          events: { onHover: { enable: true, mode: 'repulse' }, onClick: { enable: false } },
+          modes: { repulse: { distance: 70 } }
+        },
+        detectRetina: true,
+        fullScreen: { enable: false }
+      });
+    }
+  } catch (e) {
+    // fail silently if particles lib is missing or errors
+    // console.debug('tsparticles init failed', e);
   }
 });
