@@ -63,6 +63,20 @@ function ensurePanel() {
             <button id="adminPanelToggleBtn" class="admin-panel__btn-toggle" type="button" aria-pressed="false">OFF</button>
           </div>
           <button id="adminPanelLogoutBtn" class="admin-panel__btn" type="button">Log Keluar</button>
+
+          <!-- Admin auth debug area (shows current user, uid and token claims) -->
+          <div class="admin-panel__section admin-panel__debug-section">
+            <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;">
+              <div>
+                <p class="admin-panel__label">Auth Info</p>
+                <small class="admin-panel__hint">(debug)</small>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button id="adminTokenRefreshBtn" class="admin-panel__btn ghost" type="button">Refresh Token</button>
+              </div>
+            </div>
+            <pre id="adminTokenDebug" class="admin-panel__debug" aria-live="polite" style="margin-top:8px;white-space:pre-wrap;max-height:160px;overflow:auto;font-size:12px;padding:8px;border-radius:8px;background:#f7fafc;border:1px solid var(--light)"></pre>
+          </div>
         </section>
       </div>
     </div>
@@ -78,6 +92,27 @@ function ensurePanel() {
   panelPass = panel.querySelector('#adminPanelPass');
   panelMsg = panel.querySelector('#adminPanelMsg');
   panelStatus = panel.querySelector('#adminPanelStatus');
+
+  // Debug UI elements
+  const panelTokenDebug = panel.querySelector('#adminTokenDebug');
+  const panelTokenRefreshBtn = panel.querySelector('#adminTokenRefreshBtn');
+
+  async function updateTokenDebug(user) {
+    if (!panelTokenDebug) return;
+    if (!user) { panelTokenDebug.textContent = 'Not signed in.'; return; }
+    try {
+      const idTok = await user.getIdTokenResult();
+      panelTokenDebug.textContent = JSON.stringify({ uid: user.uid, email: user.email, claims: idTok.claims }, null, 2);
+    } catch (e) {
+      panelTokenDebug.textContent = 'Token error: ' + (e?.message || String(e));
+    }
+  }
+
+  panelTokenRefreshBtn?.addEventListener('click', async () => {
+    if (!auth || !auth.currentUser) { if (panelTokenDebug) panelTokenDebug.textContent = 'Not signed in.'; return; }
+    if (panelTokenDebug) panelTokenDebug.textContent = 'Refreshing token...';
+    try { await auth.currentUser.getIdTokenResult(true); await updateTokenDebug(auth.currentUser); } catch (e) { console.error('token refresh failed', e); if (panelTokenDebug) panelTokenDebug.textContent = 'Refresh failed: ' + (e?.message || String(e)); }
+  });
 
   panel.addEventListener('click', (e) => {
     if (e.target === panel) closePanel();
@@ -217,6 +252,8 @@ function init() {
     }
 
     refreshPanelView(u);
+    // Update debug display with current token claims/user info
+    try { updateTokenDebug(u); } catch (e) { console.warn('updateTokenDebug failed', e); }
   });
 }
 

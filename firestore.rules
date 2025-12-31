@@ -10,7 +10,13 @@ service cloud.firestore {
     // CMS content sections (announcements, activities, facilities, forms, vendors, quotes, etc.)
     match /content/{section} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'jmbbanjariacourt.agm@gmail.com';
+      // Allow write if the signed-in user's email matches the admin email
+      // OR if the user's UID matches the admin UID (replace with actual admin UID).
+      // Note: after changing these rules, run `firebase deploy --only firestore:rules` to apply them.
+      allow write: if request.auth != null && (
+        request.auth.token.email == 'jmbbanjariacourt.agm@gmail.com' ||
+        request.auth.uid == 'REPLACE_WITH_ADMIN_UID'
+      );
     }
 
     // Default: deny everything else (tighten surface)
