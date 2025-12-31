@@ -100,24 +100,70 @@ document.addEventListener('DOMContentLoaded', () => {
     isMobileMenuOpen = () => shell.classList.contains('open');
   }
 
-  // Home: show latest 3 announcements
+  // Home: show latest 3 announcements (with mobile "Lihat lebih" expansion)
   const latestEl = document.getElementById('latest-list');
   if (latestEl) {
+    let announcementsCache = null;
+    const lihatBtn = document.getElementById('lihatLebihBtn');
+    let expanded = false;
+
+    const renderTop = (items) => {
+      const top = items.slice(0, 3);
+      latestEl.innerHTML = top.map(item => `
+        <li>
+          <strong>${item.title}</strong>
+          <span class="meta"> — ${item.date}</span>
+          ${item.link ? ` | <a href="${item.link}" target="_blank" rel="noopener">Baca</a>` : ''}
+        </li>
+      `).join('');
+    };
+
+    const appendRest = (items) => {
+      const rest = items.slice(3);
+      if (!rest.length) {
+        // no extra items — go to announcements page
+        window.location.href = 'announcements.html';
+        return;
+      }
+      rest.forEach((item, i) => {
+        const li = document.createElement('li');
+        li.className = 'new';
+        li.innerHTML = `<strong>${item.title}</strong> <span class="meta"> — ${item.date}</span> ${item.link ? ` | <a href="${item.link}" target="_blank" rel="noopener">Baca</a>` : ''} <div class="meta">${item.summary || ''}</div>`;
+        latestEl.appendChild(li);
+        setTimeout(() => li.classList.add('visible'), 60 * i + 20);
+      });
+      latestEl.classList.add('expanded');
+    };
+
     fetch('data/announcements.json')
       .then(r => r.json())
       .then(items => {
-        const top = items.slice(0, 3);
-        latestEl.innerHTML = top.map(item => `
-          <li>
-            <strong>${item.title}</strong>
-            <span class="meta"> — ${item.date}</span>
-            ${item.link ? ` | <a href="${item.link}" target="_blank" rel="noopener">Baca</a>` : ''}
-          </li>
-        `).join('');
+        announcementsCache = items;
+        renderTop(items);
       })
       .catch(() => {
         latestEl.innerHTML = '<li>Tiada notis buat masa ini.</li>';
       });
+
+    if (lihatBtn) {
+      lihatBtn.addEventListener('click', async () => {
+        if (!expanded) {
+          const items = announcementsCache || await fetch('data/announcements.json').then(r=>r.json()).catch(()=>[]);
+          appendRest(items);
+          lihatBtn.textContent = 'Tutup';
+          lihatBtn.setAttribute('aria-expanded', 'true');
+          lihatBtn.classList.add('is-open');
+          expanded = true;
+        } else {
+          latestEl.querySelectorAll('li.new').forEach(li => li.remove());
+          latestEl.classList.remove('expanded');
+          lihatBtn.textContent = 'Lihat lebih';
+          lihatBtn.setAttribute('aria-expanded', 'false');
+          lihatBtn.classList.remove('is-open');
+          expanded = false;
+        }
+      });
+    }
   }
 
   // Smooth scroll from hero CTA/down-arrow to shortcuts and close mobile menu if open

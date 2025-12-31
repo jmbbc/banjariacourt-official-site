@@ -15,6 +15,12 @@
     <a class="skip-link" href="#utama">Langkau ke kandungan</a>
     <header class="site-header" role="banner">
       <div class="container header-wrap">
+        <a class="home-link" href="./" aria-label="Halaman utama">
+          <span class="sr-only">Home</span>
+          <svg class="home-ico" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V15a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v5.5a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1v-9.5Z" fill="currentColor" stroke="currentColor" stroke-linejoin="round"/>
+          </svg>
+        </a>
         <a class="brand" href="./">Banjaria Court</a>
         <button class="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Menu">
           <span class="nav-icon" aria-hidden="true">
@@ -67,9 +73,10 @@
         </div>
       </section>
 
-      <section class="section f-layout" aria-label="Kandungan Utama">
-        <div class="container f-grid">
+      <section class="section" aria-label="Kandungan Utama">
+        <div class="container f-grid f-layout">
           <!-- Left vertical rail: quick scan links (F spine) -->
+
           <aside class="f-rail" aria-labelledby="pantas">
             <h2 id="pantas" class="rail-title">Pautan Pantas</h2>
             <nav class="rail-nav" aria-label="Pautan Pantas">
@@ -87,6 +94,10 @@
           <section class="f-content" aria-labelledby="terkini">
             <h2 id="terkini" class="content-title">Terkini</h2>
             <ul id="latest-list" class="list"></ul>
+            <!-- Mobile-only 'Lihat lebih' action (toggles more notices) -->
+            <div class="latest-actions">
+              <button id="lihatLebihBtn" class="btn ghost lihat-lebih" type="button" aria-expanded="false">Lihat lebih</button>
+            </div>
 
             <div class="content-row">
               <a class="card wide" href="announcements.html">
