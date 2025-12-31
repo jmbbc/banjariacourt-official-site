@@ -11,6 +11,7 @@ const auth = window.__AUTH;
 
 let panel, panelCard, panelLoginBtn, panelLogoutBtn, panelToggleBtn, panelCloseBtn, panelEmail, panelPass, panelMsg, panelStatus;
 let pendingToggleDesired = null;
+let updateTokenDebug = () => {}; // initialized later when panel exists
 
 function ensureAdminIcon() {
   const headerWrap = document.querySelector('.header-wrap');
@@ -97,7 +98,7 @@ function ensurePanel() {
   const panelTokenDebug = panel.querySelector('#adminTokenDebug');
   const panelTokenRefreshBtn = panel.querySelector('#adminTokenRefreshBtn');
 
-  async function updateTokenDebug(user) {
+  updateTokenDebug = async (user) => {
     if (!panelTokenDebug) return;
     if (!user) { panelTokenDebug.textContent = 'Not signed in.'; return; }
     try {
@@ -111,7 +112,7 @@ function ensurePanel() {
     } catch (e) {
       panelTokenDebug.textContent = 'Token error: ' + (e?.message || String(e));
     }
-  }
+  };
 
   panelTokenRefreshBtn?.addEventListener('click', async () => {
     if (!auth || !auth.currentUser) { if (panelTokenDebug) panelTokenDebug.textContent = 'Not signed in.'; return; }
