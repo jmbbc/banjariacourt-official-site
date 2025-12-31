@@ -5,12 +5,12 @@ import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase
 
 // If a global override is provided (e.g., inline before this script), use it; else fallback
 const firebaseConfig = (window.__FIREBASE_CONFIG) || {
-  apiKey: "AIzaSyDxN4OAFzzsQ9clUG9RqewWZ6hJ4HIWLMc",
-  authDomain: "banjariavisitor.firebaseapp.com",
-  projectId: "banjariavisitor",
-  storageBucket: "banjariavisitor.firebasestorage.app",
-  messagingSenderId: "82057315329",
-  appId: "1:82057315329:web:7ad070a5a4fc6ecac82c00"
+  apiKey: "AIzaSyC3bDowuy7kt9cAIoO1X-90v1pgWHIjS0Y",
+  authDomain: "banjariacourt-site-4de45.firebaseapp.com",
+  projectId: "banjariacourt-site-4de45",
+  storageBucket: "banjariacourt-site-4de45.firebasestorage.app",
+  messagingSenderId: "251245637856",
+  appId: "1:251245637856:web:7fa99702b5782f1102a085"
 };
 
 const app = initializeApp(firebaseConfig);
