@@ -1,32 +1,28 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public can read AGM/EGM reports; only the admin email can write
-    match /reports/{doc} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'jmbbanjariacourt.agm@gmail.com';
-    }
 
-    // CMS content sections (announcements, activities, facilities, forms, vendors, quotes, etc.)
+    // Public read for content and reports
     match /content/{section} {
       allow read: if true;
-      // Allow write if the signed-in user's email matches the admin email
-      // OR if the user's UID matches the admin UID (replace with actual admin UID).
-      // Note: after changing these rules, run `firebase deploy --only firestore:rules` to apply them.
-      allow write: if request.auth != null && (
-        request.auth.token.email in [
-          'jmbbanjariacourt.agm@gmail.com',
-          'jmbbanjariacourt.agm2@gmail.com'
-        ] ||
-        request.auth.uid in [
-          'GVayOFuExfcWiWbWqXagLw0fJVg2', // admin UID (project banjariacourt-site-4de45)
-          'SmWu2grNVqa2kv2Fp43YWJCmVpr2', // legacy admin UID
-          'QWZC1BoYyHSBoSuVYp3VT5n35223'  // new admin UID (agm2)
-        ]
-      );
+      // Restrict writes to admin UIDs only (safer than email checks)
+      allow write: if request.auth != null && request.auth.uid in [
+        'GVayOFuExfcWiWbWqXagLw0fJVg2',   // admin UID (primary project)
+        'QWZC1BoYyHSBoSuVYp3VT5n35223',   // admin UID (agm2)
+        '7TwgD2Fu8MR6e8qu7Wp5TUrVbfJ3',   // additional admin UID
+        'SmWu2grNVqa2kv2Fp43YWJCmVpr2'    // legacy admin UID
+      ];
     }
 
-    // Default: deny everything else (tighten surface)
+    // Reports: public read, admin-only writes
+    match /reports/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid in [
+        'GVayOFuExfcWiWbWqXagLw0fJVg2'
+      ];
+    }
+
+    // Default: deny everything else
     match /{document=**} {
       allow read, write: if false;
     }
