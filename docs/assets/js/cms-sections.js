@@ -349,6 +349,27 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
     if (!db) throw new Error('Firestore tidak tersedia.');
     if (!isAdmin) throw new Error('Akses hanya untuk admin.');
     if (!adminMode) throw new Error('Admin Mode perlu dihidupkan.');
+
+    // Extra diagnostics: ensure token claims include email and show helpful messages
+    try {
+      if (user && user.getIdTokenResult) {
+        try {
+          const idTok = await user.getIdTokenResult(true); // force refresh
+          console.debug('persist: idToken claims', { uid: user.uid, email: user.email, claims: idTok.claims });
+          // If the token does not contain the expected email, surface a friendly message
+          if (idTok.claims && idTok.claims.email !== ADMIN_EMAIL) {
+            setStatus(`Akaun ${user.email || user.uid} bukan akaun admin yang dibenarkan. Sila log keluar dan log masuk semula sebagai ${ADMIN_EMAIL}.`, false);
+            return;
+          }
+        } catch (tErr) {
+          // Token fetch failed; surface warning but proceed to attempt write (it may still work)
+          console.warn('persist: gagal ambil token ID', tErr);
+        }
+      }
+    } catch (diagErr) {
+      console.warn('persist diagnostics failed', diagErr);
+    }
+
     const ref = doc(db, 'content', sectionId);
     try {
       await setDoc(ref, {
@@ -361,9 +382,9 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
       lastUpdated = new Date().toLocaleString();
       setStatus('Disimpan.');
     } catch (e) {
-      console.error('persist failed', e);
+      console.error('persist failed', e, { user: user ? { uid: user.uid, email: user.email } : null, project: window.__APP_PROJECT_ID });
       if (e?.code === 'permission-denied') {
-        setStatus('Akses Firestore ditolak. Pastikan akaun admin dan peraturan Firestore membenarkan penulisan.', false);
+        setStatus('Akses Firestore ditolak. Semak akaun log masuk (haruslah '+ADMIN_EMAIL+') dan peraturan Firestore.', false);
         return;
       }
       throw e;
