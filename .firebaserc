@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "staging": "banjariacourt-site",
+    "cd /Users/PC2/banjariacourt/banjariacourt-official-site ; git status --short": "banjariacourt-site"
+  },
+  "targets": {},
+  "etags": {}
+}

@@ -3,7 +3,7 @@
 
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 
-const ADMIN_EMAIL = 'jmbbanjariacourt.agm@gmail.com';
+const ADMIN_EMAILS = ['jmbbanjariacourt.agm@gmail.com', 'jmbbanjariacourt.agm2@gmail.com'];
 const STORAGE_KEY = 'bc-admin-mode';
 let adminMode = false;
 let isAdmin = false;
@@ -233,7 +233,7 @@ function init() {
   });
 
   onAuthStateChanged(auth, (u) => {
-    isAdmin = !!u && u.email === ADMIN_EMAIL;
+    isAdmin = !!u && ADMIN_EMAILS.includes(u.email || '');
 
     const icon = document.getElementById('adminIconBtn');
     if (icon) {

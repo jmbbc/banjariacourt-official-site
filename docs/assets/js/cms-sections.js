@@ -6,7 +6,7 @@
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
-const ADMIN_EMAIL = 'jmbbanjariacourt.agm@gmail.com';
+const ADMIN_EMAILS = ['jmbbanjariacourt.agm@gmail.com', 'jmbbanjariacourt.agm2@gmail.com'];
 
 export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fields, newItemButtonLabel = '', newItemDefaults = {}, showEditButton = true }) {
   const db = window.__FIRESTORE;
@@ -449,7 +449,7 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
   if (deleteBtn) deleteBtn.addEventListener('click', removeAll);
 
   onAuthStateChanged(auth, (u) => {
-    isAdmin = !!u && (u.email === ADMIN_EMAIL);
+    isAdmin = !!u && ADMIN_EMAILS.includes(u.email || '');
     if (!isAdmin) closeEditor();
     updateControls();
   });
