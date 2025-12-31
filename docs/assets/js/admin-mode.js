@@ -102,7 +102,12 @@ function ensurePanel() {
     if (!user) { panelTokenDebug.textContent = 'Not signed in.'; return; }
     try {
       const idTok = await user.getIdTokenResult();
-      panelTokenDebug.textContent = JSON.stringify({ uid: user.uid, email: user.email, claims: idTok.claims }, null, 2);
+      const info = { uid: user.uid, email: user.email, claims: idTok.claims };
+      // Detect project mismatch between token audience and current app project
+      if (window.__APP_PROJECT_ID && idTok.claims && idTok.claims.aud && idTok.claims.aud !== window.__APP_PROJECT_ID) {
+        info.note = `PROJECT_MISMATCH: token.aud=${idTok.claims.aud} != app project=${window.__APP_PROJECT_ID}`;
+      }
+      panelTokenDebug.textContent = JSON.stringify(info, null, 2);
     } catch (e) {
       panelTokenDebug.textContent = 'Token error: ' + (e?.message || String(e));
     }
