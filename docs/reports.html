@@ -59,6 +59,10 @@
     <script type="module">
       import { initSection } from './assets/js/cms-sections.js';
       const target = document.getElementById('reports');
+      const linkAttrs = (href) => {
+        if (!href) return '';
+        return /^https?:\/\//i.test(href) ? 'target="_blank" rel="noopener"' : '';
+      };
       const render = (items = []) => {
         const list = Array.isArray(items) ? items : [];
         if (!list.length) {
@@ -70,7 +74,7 @@
             <h3>${item.title || ''}</h3>
             <p class="meta">Tarikh: ${item.date || '-'}</p>
             ${item.summary ? `<p>${item.summary}</p>` : ''}
-            ${item.link ? `<p><a class="btn" href="${item.link}" target="_blank" rel="noopener">Muat turun / Baca</a></p>` : ''}
+            ${item.link ? `<p><a class="btn" href="${item.link}" ${linkAttrs(item.link)}>Muat turun / Baca</a></p>` : ''}
           </article>
         `).join('');
       };
@@ -85,7 +89,14 @@
           { name:'summary', label:'Ringkasan', type:'textarea' },
           { name:'link', label:'Pautan', type:'url' }
         ],
-        showEditButton: false
+        showEditButton: false,
+        sortItems: (items = []) => {
+          return [...items].sort((a, b) => {
+            const da = new Date(a.date || 0).getTime();
+            const db = new Date(b.date || 0).getTime();
+            return db - da;
+          });
+        }
       });
     </script>
   </body>

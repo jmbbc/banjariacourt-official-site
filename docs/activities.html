@@ -80,7 +80,14 @@
           { name:'summary', label:'Ringkasan', type:'textarea' },
           { name:'photos', label:'Foto (1 baris 1 URL)', type:'list' }
         ],
-        showEditButton: false
+        showEditButton: false,
+        sortItems: (items = []) => {
+          return [...items].sort((a, b) => {
+            const da = new Date(a.date || 0).getTime();
+            const db = new Date(b.date || 0).getTime();
+            return db - da;
+          });
+        }
       });
     </script>
   </body>

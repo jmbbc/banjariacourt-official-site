@@ -59,13 +59,17 @@
     <script type="module">
       import { initSection } from './assets/js/cms-sections.js';
       const target = document.getElementById('announcements');
+      const linkAttrs = (href) => {
+        if (!href) return '';
+        return /^https?:\/\//i.test(href) ? 'target="_blank" rel="noopener"' : '';
+      };
       const render = (items=[]) => {
         target.innerHTML = (items.length ? items : []).map(item => `
           <article class="post">
             <h3>${item.title || ''}</h3>
             <p class="meta">Tarikh: ${item.date || ''}</p>
             <p>${item.summary || ''}</p>
-            ${item.link ? `<p><a class="btn" href="${item.link}" target="_blank" rel="noopener">Muat turun / Baca lanjut</a></p>` : ''}
+            ${item.link ? `<p><a class="btn" href="${item.link}" ${linkAttrs(item.link)}>Muat turun / Baca lanjut</a></p>` : ''}
           </article>
         `).join('') || '<p>Tiada notis buat masa ini.</p>';
       };
@@ -82,7 +86,14 @@
         ],
         newItemButtonLabel: 'Notis Baru',
         newItemDefaults: { title:'', date:'', summary:'', link:'' },
-        showEditButton: false
+        showEditButton: false,
+        sortItems: (items = []) => {
+          return [...items].sort((a, b) => {
+            const da = new Date(a.date || 0).getTime();
+            const db = new Date(b.date || 0).getTime();
+            return db - da;
+          });
+        }
       });
     </script>
   </body>

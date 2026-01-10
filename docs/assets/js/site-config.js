@@ -1,12 +1,11 @@
 // Optional: override Firebase config for this site without editing module code.
-// Fill in these values after creating your new Firebase project/Web app.
-// Then include this script BEFORE assets/js/firebase-init.js on pages that need Firebase.
+// Updated to align with the main project banjariacourt-site-4de45.
 
 window.__FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDU6N7DVXXyHbl_mYEdA4TI2CeRke-RDwQ",
-  authDomain: "banjariacourt-site.firebaseapp.com",
-  projectId: "banjariacourt-site",
-  storageBucket: "banjariacourt-site.firebasestorage.app",
-  messagingSenderId: "761889471150",
-  appId: "1:761889471150:web:1e30b6bdd8d0e466088b3f"
+  apiKey: "AIzaSyC3bDowuy7kt9cAIoO1X-90v1pgWHIjS0Y",
+  authDomain: "banjariacourt-site-4de45.firebaseapp.com",
+  projectId: "banjariacourt-site-4de45",
+  storageBucket: "banjariacourt-site-4de45.firebasestorage.app",
+  messagingSenderId: "251245637856",
+  appId: "1:251245637856:web:7fa99702b5782f1102a085"
 };

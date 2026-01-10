@@ -6,9 +6,11 @@
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
-const ADMIN_EMAILS = ['jmbbanjariacourt.agm@gmail.com', 'jmbbanjariacourt.agm2@gmail.com'];
+// agm2 ialah admin utama; agm kekal sebagai sekunder jika diperlukan
+const ADMIN_EMAILS = ['jmbbanjariacourt.agm2@gmail.com', 'jmbbanjariacourt.agm@gmail.com'];
+const PRIMARY_ADMIN_EMAIL = 'jmbbanjariacourt.agm2@gmail.com';
 
-export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fields, newItemButtonLabel = '', newItemDefaults = {}, showEditButton = true }) {
+export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fields, newItemButtonLabel = '', newItemDefaults = {}, showEditButton = true, sortItems = null }) {
   const db = window.__FIRESTORE;
   const auth = window.__AUTH;
   if (!targetEl) return;
@@ -45,6 +47,17 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
   let lastUpdated = null;
   let adminMode = false;
   let newItemEditor = null;
+
+  const applySort = (list) => {
+    if (!sortItems) return list;
+    try {
+      const next = sortItems(Array.isArray(list) ? [...list] : []);
+      return Array.isArray(next) ? next : list;
+    } catch (e) {
+      console.warn('sortItems failed', e);
+      return list;
+    }
+  };
 
   function updateControls() {
     if (editBtn) editBtn.style.display = (isAdmin && adminMode) ? 'inline-block' : 'none';
@@ -307,18 +320,18 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
           const ref = doc(db, 'content', sectionId);
           const snap = await getDoc(ref);
           if (snap.exists() && Array.isArray(snap.data().items)) {
-            items = snap.data().items;
+            items = applySort(snap.data().items);
             const ts = snap.data().updatedAt?.toDate?.();
             if (ts) lastUpdated = ts.toLocaleString();
           } else {
-            items = fallbackData;
+            items = applySort(fallbackData);
           }
         } catch (e) {
           console.warn('Firestore load failed, using fallback', e);
-          items = fallbackData;
+          items = applySort(fallbackData);
         }
       } else {
-        items = fallbackData;
+        items = applySort(fallbackData);
       }
       render();
       setStatus('');
@@ -357,8 +370,9 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
           const idTok = await user.getIdTokenResult(true); // force refresh
           console.debug('persist: idToken claims', { uid: user.uid, email: user.email, claims: idTok.claims });
           // If the token does not contain the expected email, surface a friendly message
-          if (idTok.claims && idTok.claims.email !== ADMIN_EMAIL) {
-            setStatus(`Akaun ${user.email || user.uid} bukan akaun admin yang dibenarkan. Sila log keluar dan log masuk semula sebagai ${ADMIN_EMAIL}.`, false);
+          const claimEmail = idTok.claims?.email;
+          if (claimEmail && !ADMIN_EMAILS.includes(claimEmail)) {
+            setStatus(`Akaun ${user.email || user.uid} bukan akaun admin yang dibenarkan. Sila log keluar dan log masuk semula sebagai ${PRIMARY_ADMIN_EMAIL}.`, false);
             return;
           }
         } catch (tErr) {
@@ -370,21 +384,22 @@ export function initSection({ sectionId, targetEl, renderItems, fallbackUrl, fie
       console.warn('persist diagnostics failed', diagErr);
     }
 
+    const nextItems = applySort(Array.isArray(newItems) ? newItems : []);
     const ref = doc(db, 'content', sectionId);
     try {
       await setDoc(ref, {
-        items: newItems,
+        items: nextItems,
         updatedAt: serverTimestamp(),
         updatedBy: user?.email || user?.uid || 'admin'
       }, { merge: true });
-      items = newItems;
+      items = nextItems;
       render();
       lastUpdated = new Date().toLocaleString();
       setStatus('Disimpan.');
     } catch (e) {
       console.error('persist failed', e, { user: user ? { uid: user.uid, email: user.email } : null, project: window.__APP_PROJECT_ID });
       if (e?.code === 'permission-denied') {
-        setStatus('Akses Firestore ditolak. Semak akaun log masuk (haruslah '+ADMIN_EMAIL+') dan peraturan Firestore.', false);
+        setStatus('Akses Firestore ditolak. Semak akaun log masuk (haruslah '+PRIMARY_ADMIN_EMAIL+') dan peraturan Firestore.', false);
         return;
       }
       throw e;

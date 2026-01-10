@@ -107,13 +107,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const lihatBtn = document.getElementById('lihatLebihBtn');
     let expanded = false;
 
+    const linkAttrs = (href) => {
+      if (!href) return '';
+      return /^https?:\/\//i.test(href) ? 'target="_blank" rel="noopener"' : '';
+    };
+
+    const sortDescByDate = (items = []) => {
+      return [...items].sort((a, b) => {
+        const da = new Date(a.date || 0).getTime();
+        const db = new Date(b.date || 0).getTime();
+        return db - da;
+      });
+    };
+
     const renderTop = (items) => {
       const top = items.slice(0, 3);
       latestEl.innerHTML = top.map(item => `
         <li>
           <strong>${item.title}</strong>
           <span class="meta"> — ${item.date}</span>
-          ${item.link ? ` | <a href="${item.link}" target="_blank" rel="noopener">Baca</a>` : ''}
+          ${item.link ? ` | <a href="${item.link}" ${linkAttrs(item.link)}>Baca</a>` : ''}
         </li>
       `).join('');
     };
@@ -128,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
       rest.forEach((item, i) => {
         const li = document.createElement('li');
         li.className = 'new';
-        li.innerHTML = `<strong>${item.title}</strong> <span class="meta"> — ${item.date}</span> ${item.link ? ` | <a href="${item.link}" target="_blank" rel="noopener">Baca</a>` : ''} <div class="meta">${item.summary || ''}</div>`;
+        li.innerHTML = `<strong>${item.title}</strong> <span class="meta"> — ${item.date}</span> ${item.link ? ` | <a href="${item.link}" ${linkAttrs(item.link)}>Baca</a>` : ''} <div class="meta">${item.summary || ''}</div>`;
         latestEl.appendChild(li);
         setTimeout(() => li.classList.add('visible'), 60 * i + 20);
       });
@@ -138,8 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('data/announcements.json')
       .then(r => r.json())
       .then(items => {
-        announcementsCache = items;
-        renderTop(items);
+        const sorted = sortDescByDate(items);
+        announcementsCache = sorted;
+        renderTop(sorted);
       })
       .catch(() => {
         latestEl.innerHTML = '<li>Tiada notis buat masa ini.</li>';
@@ -149,7 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
       lihatBtn.addEventListener('click', async () => {
         if (!expanded) {
           const items = announcementsCache || await fetch('data/announcements.json').then(r=>r.json()).catch(()=>[]);
-          appendRest(items);
+          const sorted = sortDescByDate(items);
+          announcementsCache = sorted;
+          appendRest(sorted);
           lihatBtn.textContent = 'Tutup';
           lihatBtn.setAttribute('aria-expanded', 'true');
           lihatBtn.classList.add('is-open');

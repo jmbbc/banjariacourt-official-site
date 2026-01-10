@@ -10,8 +10,7 @@ let isAdmin = false;
 const auth = window.__AUTH;
 
 let panel, panelCard, panelLoginBtn, panelLogoutBtn, panelToggleBtn, panelCloseBtn, panelEmail, panelPass, panelMsg, panelStatus;
-let pendingToggleDesired = null;
-let updateTokenDebug = () => {}; // initialized later when panel exists
+let updateTokenDebug = () => {}; // noop; debug panel removed
 
 function ensureAdminIcon() {
   const headerWrap = document.querySelector('.header-wrap');
@@ -64,20 +63,6 @@ function ensurePanel() {
             <button id="adminPanelToggleBtn" class="admin-panel__btn-toggle" type="button" aria-pressed="false">OFF</button>
           </div>
           <button id="adminPanelLogoutBtn" class="admin-panel__btn" type="button">Log Keluar</button>
-
-          <!-- Admin auth debug area (shows current user, uid and token claims) -->
-          <div class="admin-panel__section admin-panel__debug-section">
-            <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;">
-              <div>
-                <p class="admin-panel__label">Auth Info</p>
-                <small class="admin-panel__hint">(debug)</small>
-              </div>
-              <div style="display:flex;gap:8px;align-items:center">
-                <button id="adminTokenRefreshBtn" class="admin-panel__btn ghost" type="button">Refresh Token</button>
-              </div>
-            </div>
-            <pre id="adminTokenDebug" class="admin-panel__debug" aria-live="polite" style="margin-top:8px;white-space:pre-wrap;max-height:160px;overflow:auto;font-size:12px;padding:8px;border-radius:8px;background:#f7fafc;border:1px solid var(--light)"></pre>
-          </div>
         </section>
       </div>
     </div>
@@ -93,32 +78,6 @@ function ensurePanel() {
   panelPass = panel.querySelector('#adminPanelPass');
   panelMsg = panel.querySelector('#adminPanelMsg');
   panelStatus = panel.querySelector('#adminPanelStatus');
-
-  // Debug UI elements
-  const panelTokenDebug = panel.querySelector('#adminTokenDebug');
-  const panelTokenRefreshBtn = panel.querySelector('#adminTokenRefreshBtn');
-
-  updateTokenDebug = async (user) => {
-    if (!panelTokenDebug) return;
-    if (!user) { panelTokenDebug.textContent = 'Not signed in.'; return; }
-    try {
-      const idTok = await user.getIdTokenResult();
-      const info = { uid: user.uid, email: user.email, claims: idTok.claims };
-      // Detect project mismatch between token audience and current app project
-      if (window.__APP_PROJECT_ID && idTok.claims && idTok.claims.aud && idTok.claims.aud !== window.__APP_PROJECT_ID) {
-        info.note = `PROJECT_MISMATCH: token.aud=${idTok.claims.aud} != app project=${window.__APP_PROJECT_ID}`;
-      }
-      panelTokenDebug.textContent = JSON.stringify(info, null, 2);
-    } catch (e) {
-      panelTokenDebug.textContent = 'Token error: ' + (e?.message || String(e));
-    }
-  };
-
-  panelTokenRefreshBtn?.addEventListener('click', async () => {
-    if (!auth || !auth.currentUser) { if (panelTokenDebug) panelTokenDebug.textContent = 'Not signed in.'; return; }
-    if (panelTokenDebug) panelTokenDebug.textContent = 'Refreshing token...';
-    try { await auth.currentUser.getIdTokenResult(true); await updateTokenDebug(auth.currentUser); } catch (e) { console.error('token refresh failed', e); if (panelTokenDebug) panelTokenDebug.textContent = 'Refresh failed: ' + (e?.message || String(e)); }
-  });
 
   panel.addEventListener('click', (e) => {
     if (e.target === panel) closePanel();
@@ -211,6 +170,7 @@ function init() {
       if (panelMsg) panelMsg.textContent = 'Mencuba log masuk…';
       await signInWithEmailAndPassword(auth, email, pass);
       if (panelMsg) panelMsg.textContent = '';
+      closePanel(); // tutup panel selepas log masuk berjaya
     } catch (e) {
       if (panelMsg) panelMsg.textContent = e?.message || 'Gagal log masuk.';
     }
@@ -222,14 +182,10 @@ function init() {
 
   panelToggleBtn?.addEventListener('click', () => {
     const desired = !adminMode;
-    if (!isAdmin) {
-      pendingToggleDesired = desired;
-      if (panelMsg) panelMsg.textContent = 'Log masuk sebagai admin untuk teruskan.';
-      panelEmail?.focus();
-      return;
-    }
-    pendingToggleDesired = null;
     setAdminMode(desired);
+    if (!isAdmin && panelMsg) {
+      panelMsg.textContent = 'Log masuk sebagai admin untuk akses simpan.';
+    }
   });
 
   onAuthStateChanged(auth, (u) => {
@@ -244,17 +200,11 @@ function init() {
       icon.classList.toggle('on', adminMode);
     }
 
-    if (!isAdmin) {
-      setAdminMode(false);
-    } else {
+    if (isAdmin) {
       try {
         const wasOn = localStorage.getItem(STORAGE_KEY) === '1';
         if (wasOn) setAdminMode(true);
       } catch (e) { /* ignore */ }
-      if (pendingToggleDesired !== null) {
-        setAdminMode(pendingToggleDesired);
-        pendingToggleDesired = null;
-      }
     }
 
     refreshPanelView(u);
